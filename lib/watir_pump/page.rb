@@ -9,14 +9,12 @@ module WatirPump
       end
 
       def open(&blk)
-        instance.instance_eval do
-          browser.goto WatirPump.config.base_url + uri
-        end
+        instance.browser.goto WatirPump.config.base_url + uri
         use(&blk) if block_given?
       end
 
-      def use(&blk)
-        instance.instance_eval(&blk)
+      def use
+        yield instance, instance.browser
       end
 
       def instance

@@ -24,11 +24,10 @@ end
 RSpec.describe 'Mailinator' do
   it 'more-less works' do
     title = nil
-    HomePage.open { goto_inbox('kasia') }
-    InboxPage.use do
-      inbox.set 'Marzena'
-      title = browser.title
+    HomePage.open { |page| page.goto_inbox('kasia') }
+    InboxPage.use do |page, browser|
+      page.inbox.set 'Marzena'
+      expect(browser.title).to eq 'Mailinator'
     end
-    expect(title).to eq 'Mailinator'
   end
 end
