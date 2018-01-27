@@ -1,0 +1,10 @@
+AllCops:
+  TargetRubyVersion: 2.2
+Documentation:
+  Enabled: false
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']
+Metrics/MethodLength:
+  Max: 15
+# Style/TrailingCommaInLiteral:
+#   Enabled: false

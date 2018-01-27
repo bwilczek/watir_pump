@@ -17,7 +17,7 @@ module WatirPump
         instance.instance_eval do
           browser.goto WatirPump.config.base_url + uri
         end
-        use &blk if block_given?
+        use(&blk) if block_given?
       end
 
       def use(&blk)
@@ -29,9 +29,9 @@ module WatirPump
       end
 
       %w[text_field button title].each do |watir_method|
-        define_method watir_method do |name, *args|
-          define_method(name) do |*method_args, **method_named_args|
-            browser.send(watir_method, *args)
+        define_method watir_method do |name, *args, **keyword_args|
+          define_method(name) do
+            browser.send(watir_method, *args, **keyword_args)
           end
         end
       end
