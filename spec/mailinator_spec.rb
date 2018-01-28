@@ -24,7 +24,7 @@ RSpec.describe 'Mailinator' do
 
   it 'navigates to inbox' do
     Mailinator::HomePage.open { |page| page.goto_inbox('kasia') }
-    Mailinator::InboxPage.use do |page, browser|
+    Mailinator::InboxPage.act do |page, browser|
       page.inbox.set 'Marzena'
       expect(browser.title).to eq 'Mailinator'
     end

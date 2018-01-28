@@ -1,5 +1,5 @@
 require 'watir_pump'
 
-class HomePage < WatirPump::Page
+class IndexPage < WatirPump::Page
   uri '/index.html'
 end

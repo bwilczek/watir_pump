@@ -20,7 +20,7 @@ module WatirPump
       def use
         yield instance, instance.browser
       end
-      alias_method :act, :use
+      alias act use
 
       def instance
         @instance ||= new(WatirPump.config.browser)
