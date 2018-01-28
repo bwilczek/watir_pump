@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activesupport', '~> 4.0'
   s.add_dependency 'addressable', '~> 2.5'
   s.add_dependency 'watir', '~> 6.10'
+  s.add_development_dependency 'pry', '~> 0.11'
   s.add_development_dependency 'rspec', '~> 3.7'
   s.add_development_dependency 'rubocop', '~> 0.52'
   s.add_development_dependency 'sinatra', '~> 2.0'

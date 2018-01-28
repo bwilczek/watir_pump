@@ -3,8 +3,6 @@ require_relative 'component'
 
 module WatirPump
   class Page < Component
-    attr_reader :browser
-
     class << self
       def uri(uri = nil)
         @uri = uri unless uri.nil?
@@ -18,6 +16,10 @@ module WatirPump
         use(&blk) if block_given?
       end
 
+      def browser
+        instance.browser
+      end
+
       def use
         yield instance, instance.browser
       end
@@ -27,10 +29,6 @@ module WatirPump
         @instance ||= new(WatirPump.config.browser)
       end
     end # << self
-
-    def initialize(browser)
-      @browser = browser
-    end
 
     def uri
       self.class.uri

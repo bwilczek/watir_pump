@@ -1,10 +1,9 @@
 require 'watir_pump'
 
+require_relative '../components/yes_no_widget'
+
 class IndexPage < WatirPump::Page
   uri '/index.html'
 
-  button :yes, id: 'btn_yay'
-  span :result, id: 'yay_nope'
-
-  # component :yes_no, YesNoWidget
+  component :yes_no, YesNoWidget, -> { browser.div(id: 'reusable_component') }
 end
