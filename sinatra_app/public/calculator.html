@@ -1,0 +1,50 @@
+<html>
+<head>
+  <title>Calculator :: Wilhelmine die Katze</title>
+  <script>
+  function doMath(operator) {
+    var op1 = parseInt(document.getElementById('operand1').value);
+    var op2 = parseInt(document.getElementById('operand2').value);
+    var result = null;
+    switch(operator) {
+      case '+':
+        result = op1 + op2;
+        break;
+      case '-':
+        result = op1 - op2;
+        break;
+      case '*':
+        result = op1 * op2;
+        break;
+      case '/':
+        result = op1 / op2;
+        break;
+    }
+
+    document.getElementById('result').innerHTML = result;
+  }
+  </script>
+<head/>
+<body>
+  <div id="header">
+    <div id="top_menu">
+      <a href="index.html">Home</a> |
+      <a href="calculator.html">Calculator</a> |
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+  <hr />
+  <p>
+    Calculator
+  </p>
+  <div>
+    <input size="3" id="operand1" />
+    <input size="3" id="operand2" />
+    <button id="op_add" onclick="(function(e, op){doMath(op)})(event, '+')">+</button>
+    <button id="op_sub" onclick="(function(e, op){doMath(op)})(event, '-')">-</button>
+    <button id="op_mul" onclick="(function(e, op){doMath(op)})(event, '*')">*</button>
+    <button id="op_div" onclick="(function(e, op){doMath(op)})(event, '/')">/</button>
+    <div id="result">-</div>
+  </div>
+</body>
+</html>
