@@ -7,8 +7,9 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
-  config.define_derived_metadata(:file_path => Regexp.new('/spec/demo/')) do |metadata|
-    metadata[:aggregate_failures] = true
+  config.define_derived_metadata(file_path: Regexp.new('/spec/demo/')) do |meta|
+    meta[:aggregate_failures] = true
+    meta[:watir] = true
   end
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
@@ -22,4 +23,9 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
+
+  config.after(:each, watir: true) do
+    WatirPump.config.browser.cookies.clear
+    WatirPump.config.browser.goto('about:blank')
+  end
 end

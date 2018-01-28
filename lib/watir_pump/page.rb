@@ -1,3 +1,5 @@
+require 'addressable/template'
+
 module WatirPump
   class Page
     attr_reader :browser
@@ -8,8 +10,10 @@ module WatirPump
         @uri
       end
 
-      def open(&blk)
-        instance.browser.goto WatirPump.config.base_url + uri
+      def open(params = {}, &blk)
+        url_template = WatirPump.config.base_url + uri
+        url = Addressable::Template.new(url_template).expand(params).to_s
+        instance.browser.goto url
         use(&blk) if block_given?
       end
 

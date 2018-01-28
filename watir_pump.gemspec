@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.license      = 'MIT'
   s.required_ruby_version = '~> 2.2'
   s.add_dependency 'activesupport', '~> 4.0'
+  s.add_dependency 'addressable', '~> 2.5'
   s.add_dependency 'watir', '~> 6.10'
   s.add_development_dependency 'rspec', '~> 3.7'
   s.add_development_dependency 'rubocop', '~> 0.52'

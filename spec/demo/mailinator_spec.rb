@@ -13,6 +13,7 @@ class HomePage < WatirPump::Page
 end
 
 class InboxPage < WatirPump::Page
+  uri '/v2/inbox.jsp?zone=public&query={inbox}'
   text_field :inbox, id: 'inbox_field'
 end
 
@@ -22,11 +23,17 @@ WatirPump.configure do |c|
 end
 
 RSpec.describe 'Mailinator' do
-  it 'more-less works' do
-    title = nil
+  it 'navigates to inbox' do
     HomePage.open { |page| page.goto_inbox('kasia') }
     InboxPage.use do |page, browser|
       page.inbox.set 'Marzena'
+      expect(browser.title).to eq 'Mailinator'
+    end
+  end
+
+  it 'opens inbox directly from URL' do
+    InboxPage.open(inbox: 'kasia') do |page, browser|
+      page.inbox.set 'Natalia'
       expect(browser.title).to eq 'Mailinator'
     end
   end
