@@ -1,7 +1,8 @@
 require 'addressable/template'
+require_relative 'component'
 
 module WatirPump
-  class Page
+  class Page < Component
     attr_reader :browser
 
     class << self
@@ -24,14 +25,6 @@ module WatirPump
 
       def instance
         @instance ||= new(WatirPump.config.browser)
-      end
-
-      %w[text_field button title].each do |watir_method|
-        define_method watir_method do |name, *args, **keyword_args|
-          define_method(name) do
-            browser.send(watir_method, *args, **keyword_args)
-          end
-        end
       end
     end # << self
 

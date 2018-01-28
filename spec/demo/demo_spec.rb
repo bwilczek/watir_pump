@@ -12,7 +12,9 @@ RSpec.describe 'Demo Sinatra App' do
   end
 
   it 'has the right title' do
-    IndexPage.open do |_page, browser|
+    IndexPage.open do |page, browser|
+      page.yes.click
+      expect(page.result.text).to eq 'Yay!'
       expect(browser.title).to include('Wilhelmine')
     end
   end
