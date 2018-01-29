@@ -7,6 +7,7 @@ require_relative '../components/top_menu'
 class IndexPage < WatirPump::Page
   uri '/index.html'
 
+  image :cat, id: 'wilhelmine'
   component :top_menu, TopMenu, :div, id: 'top_menu'
   components :questions, QuestionWidget, :divs, data_role: 'question_wrapper'
 end

@@ -12,6 +12,12 @@ RSpec.describe 'Demo Sinatra App' do
     SinatraHelper.stop
   end
 
+  it 'element directly on the page' do
+    IndexPage.open do |page, _browser|
+      expect(page.cat.attribute_value('alt')).to include('The cat is here')
+    end
+  end
+
   it 'flat component' do
     IndexPage.open do |page, browser|
       page.top_menu.calculator.click
@@ -19,7 +25,7 @@ RSpec.describe 'Demo Sinatra App' do
     end
   end
 
-  it 'nested components' do
+  it 'list of nested components' do
     IndexPage.open do |page, _browser|
       page.questions[1].buttons.yes.click
       expect(page.questions[1].buttons.result.text).to eq 'Yay!'
@@ -28,7 +34,7 @@ RSpec.describe 'Demo Sinatra App' do
     end
   end
 
-  it 'passes URL params' do
+  it 'URL params' do
     CalculatorPage.open(query: { operand1: 2, operand2: 4 }) do |_page, browser|
       expect(browser.url).to include('operand1=2&operand2=4')
     end
