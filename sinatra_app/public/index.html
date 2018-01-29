@@ -50,11 +50,24 @@
       </tbody>
     </table>
   </p>
-  <div id="summary_index">
-    <div id="reusable_component">
-      <button id="btn_yay" onclick="document.getElementById('yay_nope').innerHTML='Yay!'">Yay!</button>
-      <button id="btn_nope" onclick="document.getElementById('yay_nope').innerHTML='Nope.'">Nope.</button>
-      <span id="yay_nope">-<span>
+  <div id="questions">
+    <div data-role="question_wrapper" id="q1">
+      <div data-role="question">Do you like kittens?</div>
+      <button data-role="btn_yes" onclick="document.getElementById('yes_or_no1').innerHTML='Yay!'">Yay!</button>
+      <button data-role="btn_no" onclick="document.getElementById('yes_or_no1').innerHTML='Nope.'">Nope.</button>
+      <span id="yes_or_no1" data-role="yes_or_no">-<span>
+    </div>
+    <div data-role="question_wrapper" id="q2">
+      <div data-role="question">Did Mongolians invade South Park?</div>
+      <button data-role="btn_yes" onclick="document.getElementById('yes_or_no2').innerHTML='Yay!'">Yay!</button>
+      <button data-role="btn_no" onclick="document.getElementById('yes_or_no2').innerHTML='Nope.'">Nope.</button>
+      <span id="yes_or_no2" data-role="yes_or_no">-<span>
+    </div>
+    <div data-role="question_wrapper" id="q3">
+      <div data-role="question">Do you like reggae?</div>
+      <button data-role="btn_yes" onclick="document.getElementById('yes_or_no3').innerHTML='Yay!'">Yay!</button>
+      <button data-role="btn_no" onclick="document.getElementById('yes_or_no3').innerHTML='Nope.'">Nope.</button>
+      <span id="yes_or_no3" data-role="yes_or_no">-<span>
     </div>
   </div>
 </body>
