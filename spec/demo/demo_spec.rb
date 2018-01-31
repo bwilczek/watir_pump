@@ -41,6 +41,13 @@ RSpec.describe 'Demo Sinatra App' do
     end
   end
 
+  it 'page method call' do
+    IndexPage.open do |page, browser|
+      page.goto_contact
+      expect(browser.url).to include('contact.html')
+    end
+  end
+
   it 'list of nested components' do
     IndexPage.open do |page, _browser|
       page.questions[1].buttons.yes.click

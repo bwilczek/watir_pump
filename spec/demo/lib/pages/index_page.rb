@@ -14,4 +14,8 @@ class IndexPage < WatirPump::Page
   dynamic :yes_n, ->(n) { questions[n].buttons.yes }
   dynamic :cat_alt, -> { cat.attribute_value('alt') }
   dynamic :btn_cnt, -> { questions.sum { |q| q.node.buttons.count } }
+
+  def goto_contact
+    top_menu.contact.click
+  end
 end
