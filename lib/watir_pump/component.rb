@@ -12,6 +12,12 @@ module WatirPump
         end
       end
 
+      def dynamic(name, p)
+        define_method(name) do |*args|
+          instance_exec(*args, &p)
+        end
+      end
+
       def component(name, klass, rel_method = nil, *rel_args)
         define_method(name) do
           root_node = rel_method.nil? ? root : root.send(rel_method, *rel_args)
