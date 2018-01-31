@@ -20,13 +20,15 @@ RSpec.describe 'Demo Sinatra App' do
 
   it 'element dynamically located using lambda' do
     IndexPage.open do |page, _browser|
-      page.yes0.click
-      expect(page.questions[0].buttons.result.text).to eq 'Yay!'
+      expect(page.btn_cnt).to eq 6
+      expect(page.cat_alt).to include('The cat is here')
     end
   end
 
   it 'element dynamically located using lambda with param' do
     IndexPage.open do |page, _browser|
+      page.yes0.click
+      expect(page.questions[0].buttons.result.text).to eq 'Yay!'
       page.yes_n(2).click
       expect(page.questions[2].buttons.result.text).to eq 'Yay!'
     end

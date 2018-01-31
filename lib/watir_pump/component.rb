@@ -46,5 +46,6 @@ module WatirPump
       ret = parent.root
       ret.class.name.include?('Collection') ? ret.first : ret
     end
+    alias node root
   end
 end
