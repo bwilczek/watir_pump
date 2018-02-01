@@ -10,6 +10,8 @@ class IndexPage < WatirPump::Page
   image :cat, id: 'wilhelmine'
   component :top_menu, TopMenu, :div, id: 'top_menu'
   components :questions, QuestionWidget, :divs, data_role: 'question_wrapper'
+  div :questions_box, id: 'questions'
+  components :questions_lambda, QuestionWidget, -> { questions_box.divs(data_role: 'question_wrapper') }
   dynamic :yes0, -> { yes_n(0) }
   dynamic :yes_n, ->(n) { questions[n].buttons.yes }
   dynamic :cat_alt, -> { cat.attribute_value('alt') }

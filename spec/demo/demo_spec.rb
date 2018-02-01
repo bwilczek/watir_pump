@@ -34,6 +34,13 @@ RSpec.describe 'Demo Sinatra App' do
     end
   end
 
+  it 'components dynamically located using lambda' do
+    IndexPage.open do |page, _browser|
+      page.yes_n(2).click
+      expect(page.questions_lambda[2].buttons.result.text).to eq 'Yay!'
+    end
+  end
+
   it 'flat component' do
     IndexPage.open do |page, browser|
       page.top_menu.calculator.click
