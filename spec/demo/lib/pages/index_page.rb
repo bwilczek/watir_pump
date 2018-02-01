@@ -1,6 +1,6 @@
 require 'watir_pump'
 
-require_relative '../components/question'
+require_relative '../components/question_widget'
 require_relative '../components/top_menu'
 require_relative 'base_page'
 

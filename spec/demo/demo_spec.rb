@@ -24,4 +24,15 @@ RSpec.describe 'Demo Sinatra App' do
       expect(browser.url).to include('operand1=2&operand2=4')
     end
   end
+
+  it 'navigates across pages' do
+    IndexPage.open do |page, browser|
+      page.top_menu.calculator.click
+      expect(browser.url).to include('calculator.html')
+    end
+    CalculatorPage.act do |page, _browser|
+      page.add(2, 3)
+      expect(page.result).to eq 5
+    end
+  end
 end
