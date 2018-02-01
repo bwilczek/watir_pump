@@ -28,8 +28,7 @@ module WatirPump
       end
 
       def use
-        # TODO: add more verbose message on timeout
-        Watir::Wait.until { instance.loaded? }
+        Watir::Wait.until(message: "Timeout waiting for #{self} to load") { instance.loaded? }
         yield instance, instance.browser
       end
       alias act use
