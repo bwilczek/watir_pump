@@ -83,4 +83,19 @@ RSpec.describe 'Locators on Page' do
       end
     end
   end
+
+  describe 'query' do
+    it 'works without params' do
+      IndexPage.open do |page, _browser|
+        expect(page.btn_cnt).to eq 6
+        expect(page.cat_alt).to include('The cat is here')
+      end
+    end
+
+    it 'works with params' do
+      IndexPage.open do |page, _browser|
+        expect(page.yes_n_query(1)).to be_a Watir::Button
+      end
+    end
+  end
 end

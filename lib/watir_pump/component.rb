@@ -16,7 +16,7 @@ module WatirPump
         end
       end
 
-      def dynamic(name, p)
+      def query(name, p)
         define_method(name) do |*args|
           instance_exec(*args, &p)
         end

@@ -17,10 +17,11 @@ class IndexPage < BasePage
   components :questions_lambda, QuestionWidget, -> { questions_box.divs(data_role: 'question_wrapper') }
   components :questions_lambda_param, QuestionWidget, ->(role) { questions_box.divs(data_role: role) }
 
-  dynamic :yes0, -> { yes_n(0) }
-  dynamic :yes_n, ->(n) { questions[n].buttons.yes }
-  dynamic :cat_alt, -> { cat.attribute_value('alt') }
-  dynamic :btn_cnt, -> { questions.sum { |q| q.node.buttons.count } }
+  button :yes0, -> { yes_n(0) }
+  button :yes_n, ->(n) { questions[n].buttons.yes }
+  query :yes_n_query, ->(n) { questions[n].buttons.yes }
+  query :cat_alt, -> { cat.attribute_value('alt') }
+  query :btn_cnt, -> { questions.sum { |q| q.node.buttons.count } }
 
   def goto_contact
     top_menu.contact.click
