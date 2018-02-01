@@ -2,17 +2,14 @@ require 'watir_pump'
 
 require_relative '../components/question'
 require_relative '../components/top_menu'
+require_relative 'base_page'
 
-class IndexPage < WatirPump::Page
+class IndexPage < BasePage
   uri '/index.html'
 
   image :cat, id: 'wilhelmine'
   image :cat_lambda, -> { browser.image(id: 'wilhelmine') }
   image :cat_lambda_param, ->(name) { browser.image(id: name) }
-
-  component :top_menu, TopMenu, :div, id: 'top_menu'
-  component :top_menu_lambda, TopMenu, -> { browser.div(id: 'top_menu') }
-  component :top_menu_lambda_param, TopMenu, ->(id) { browser.div(id: id) }
 
   div :questions_box, id: 'questions'
 

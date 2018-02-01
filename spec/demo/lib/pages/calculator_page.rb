@@ -1,5 +1,7 @@
 require 'watir_pump'
 
-class CalculatorPage < WatirPump::Page
+require_relative 'base_page'
+
+class CalculatorPage < BasePage
   uri '/calculator.html{?query*}'
 end
