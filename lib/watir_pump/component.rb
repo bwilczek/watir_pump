@@ -5,9 +5,13 @@ module WatirPump
 
     class << self
       %w[text_field button span div link image].each do |watir_method|
-        define_method watir_method do |name, *args, **keyword_args|
-          define_method(name) do
-            root.send(watir_method, *args, **keyword_args)
+        define_method watir_method do |name, *args|
+          define_method(name) do |*loc_args|
+            if args.first.is_a? Proc
+              instance_exec(*loc_args, &args.first)
+            else
+              root.send(watir_method, *args)
+            end
           end
         end
       end
@@ -18,19 +22,23 @@ module WatirPump
         end
       end
 
-      def component(name, klass, rel_method = nil, *rel_args)
-        define_method(name) do
-          root_node = rel_method.nil? ? root : root.send(rel_method, *rel_args)
-          klass.new(browser, self, root_node)
+      def component(name, klass, loc_method = nil, *loc_args)
+        define_method(name) do |*args|
+          node = if loc_method.is_a? Proc
+                   instance_exec(*args, &loc_method)
+                 else
+                   loc_method.nil? ? root : root.send(loc_method, *loc_args)
+                 end
+          klass.new(browser, self, node)
         end
       end
 
-      def components(name, klass, rel_method = nil, *rel_args)
+      def components(name, klass, loc_method = nil, *loc_args)
         define_method(name) do |*args|
-          nodes = if rel_method.is_a? Proc
-                    instance_exec(*args, &rel_method)
+          nodes = if loc_method.is_a? Proc
+                    instance_exec(*args, &loc_method)
                   else
-                    root.send(rel_method, *rel_args)
+                    root.send(loc_method, *loc_args)
                   end
           nodes.map do |node|
             klass.new(browser, self, node)
