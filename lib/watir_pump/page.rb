@@ -9,8 +9,11 @@ module WatirPump
         @uri
       end
 
+      def url_template
+        WatirPump.config.base_url + uri
+      end
+
       def open(params = {}, &blk)
-        url_template = WatirPump.config.base_url + uri
         url = Addressable::Template.new(url_template).expand(params).to_s
         instance.browser.goto url
         use(&blk) if block_given?
@@ -20,7 +23,12 @@ module WatirPump
         instance.browser
       end
 
+      def loaded?
+        Addressable::Template.new(url_template).match browser.url
+      end
+
       def use
+        raise "#{self} not loaded" unless instance.loaded?
         yield instance, instance.browser
       end
       alias act use
@@ -29,6 +37,10 @@ module WatirPump
         @instance ||= new(WatirPump.config.browser)
       end
     end # << self
+
+    def loaded?
+      self.class.loaded?
+    end
 
     def uri
       self.class.uri
