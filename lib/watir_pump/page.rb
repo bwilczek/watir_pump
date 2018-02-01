@@ -28,7 +28,8 @@ module WatirPump
       end
 
       def use
-        raise "#{self} not loaded" unless instance.loaded?
+        # TODO: add more verbose message on timeout
+        Watir::Wait.until { instance.loaded? }
         yield instance, instance.browser
       end
       alias act use
