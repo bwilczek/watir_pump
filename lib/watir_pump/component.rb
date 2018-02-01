@@ -26,17 +26,14 @@ module WatirPump
       end
 
       def components(name, klass, rel_method = nil, *rel_args)
-        if rel_method.is_a? Proc
-          define_method(name) do |*args|
-            instance_exec(*args, &rel_method).map do |node|
-              klass.new(browser, self, node)
-            end
-          end
-        else
-          define_method(name) do |*args|
-            root.send(rel_method, *rel_args).map do |node|
-              klass.new(browser, self, node)
-            end
+        define_method(name) do |*args|
+          nodes = if rel_method.is_a? Proc
+                    instance_exec(*args, &rel_method)
+                  else
+                    root.send(rel_method, *rel_args)
+                  end
+          nodes.map do |node|
+            klass.new(browser, self, node)
           end
         end
       end
