@@ -28,7 +28,9 @@ module WatirPump
       end
 
       def use
-        Watir::Wait.until(message: "Timeout waiting for #{self} to load") { instance.loaded? }
+        Watir::Wait.until(message: "Timeout waiting for #{self} to load") do
+          instance.loaded?
+        end
         yield instance, instance.browser
       end
       alias act use
