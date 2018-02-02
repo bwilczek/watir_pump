@@ -4,7 +4,7 @@ module WatirPump
     attr_reader :parent
 
     class << self
-      %w[text_field button span div link image table].each do |watir_method|
+      Watir::Container.instance_methods(false).each do |watir_method|
         define_method watir_method do |name, *args|
           define_method(name) do |*loc_args|
             if args.first.is_a? Proc
