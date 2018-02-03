@@ -31,8 +31,7 @@ RSpec.describe 'Demo Sinatra App' do
       expect(browser.url).to include('calculator.html')
     end
     CalculatorPage.act do |page, _browser|
-      page.add(2, 3)
-      expect(page.result).to eq 5
+      expect(page.operand1).to be_visible
     end
   end
 end

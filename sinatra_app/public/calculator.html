@@ -6,9 +6,11 @@
     var op1 = parseInt(document.getElementById('operand1').value);
     var op2 = parseInt(document.getElementById('operand2').value);
     var result = null;
+    var delay = 0
     switch(operator) {
       case '+':
         result = op1 + op2;
+        delay = 600
         break;
       case '-':
         result = op1 - op2;
@@ -20,8 +22,10 @@
         result = op1 / op2;
         break;
     }
-
-    document.getElementById('result').innerHTML = result;
+    document.getElementById('result').innerHTML = '...';
+    setTimeout(function(){
+      document.getElementById('result').innerHTML = result;
+    }, delay)
   }
   </script>
 <head/>
@@ -44,6 +48,7 @@
     <button id="op_sub" onclick="(function(e, op){doMath(op)})(event, '-')">-</button>
     <button id="op_mul" onclick="(function(e, op){doMath(op)})(event, '*')">*</button>
     <button id="op_div" onclick="(function(e, op){doMath(op)})(event, '/')">/</button>
+    <button id="reset" onclick="document.getElementById('result').innerHTML = '-';">reset</button>
     <div id="result">-</div>
   </div>
 </body>
