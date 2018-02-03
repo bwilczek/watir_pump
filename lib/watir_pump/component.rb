@@ -1,3 +1,5 @@
+require_relative 'component_collection'
+
 module WatirPump
   class Component
     attr_reader :browser
@@ -40,9 +42,7 @@ module WatirPump
                   else
                     root.send(loc_method, *loc_args)
                   end
-          nodes.map do |node|
-            klass.new(browser, self, node)
-          end
+          ComponentCollection.new(nodes.map { |n| klass.new(browser, self, n) })
         end
       end
     end

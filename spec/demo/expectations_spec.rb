@@ -1,7 +1,8 @@
 require_relative 'lib/pages/calculator_page'
+require_relative 'lib/pages/index_page'
 require_relative 'lib/helpers/sinatra_helper'
 
-RSpec.describe 'Table' do
+RSpec.describe 'Expectations' do
   before(:all) do
     SinatraHelper.start
     WatirPump.config.base_url = 'http://localhost:4567'
@@ -15,6 +16,13 @@ RSpec.describe 'Table' do
     CalculatorPage.open do |page, _browser|
       page.add(2, 3)
       expect(page.result).to eq 5
+    end
+  end
+
+  it 'expects collection to be visible and present' do
+    IndexPage.open do |page, _browser|
+      expect(page.questions).to be_present
+      expect(page.questions).to be_visible
     end
   end
 
