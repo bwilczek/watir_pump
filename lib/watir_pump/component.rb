@@ -11,6 +11,7 @@ module WatirPump
     attr_reader :parent
 
     class << self
+      # Proxy methods for HTML tags
       Watir::Container.instance_methods(false).each do |watir_method|
         define_method watir_method do |name, *args|
           define_method(name) do |*loc_args|
@@ -23,16 +24,15 @@ module WatirPump
         end
       end
 
-      # define *_reader methods that return .text for certain element types
-      # TODO: DRY up: very similar code is repeated above
+      # Methods for element content readers
+      # span_reader, :title, id: asd
+      # will create methods :title and :title_element
+      # where :title is a shortcut for :title_element.text
       %i[span div].each do |watir_method|
         define_method "#{watir_method}_reader" do |name, *args|
-          define_method(name) do |*loc_args|
-            if args.first.is_a? Proc
-              instance_exec(*loc_args, &args.first).text
-            else
-              root.send(watir_method, *args).text
-            end
+          send(watir_method, "#{name}_element", *args)
+          define_method(name) do
+            send("#{name}_element").text
           end
         end
       end
