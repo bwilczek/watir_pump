@@ -1,7 +1,12 @@
 require_relative 'component_collection'
+require 'forwardable'
 
 module WatirPump
   class Component
+    extend Forwardable
+
+    delegate %i[visible? present?] => :root
+
     attr_reader :browser
     attr_reader :parent
 
