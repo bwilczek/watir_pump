@@ -11,14 +11,11 @@ module WatirPump
       @arr = arr
     end
 
-    def present?
-      return false if empty?
-      first.node.present?
-    end
-
-    def visible?
-      return false if empty?
-      first.node.visible?
+    %i[present? visible?].each do |method_name|
+      define_method method_name do
+        return false if empty?
+        find { |component| component.node.send(method_name) }
+      end
     end
   end
 end
