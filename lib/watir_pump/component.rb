@@ -37,6 +37,16 @@ module WatirPump
         end
       end
 
+      # Methods for element content writers
+      %i[text_field].each do |watir_method|
+        define_method "#{watir_method}_writer" do |name, *args|
+          send(watir_method, "#{name}_element", *args)
+          define_method("#{name}=") do |value|
+            send("#{name}_element").set value
+          end
+        end
+      end
+
       def query(name, p)
         define_method(name) do |*args|
           instance_exec(*args, &p)

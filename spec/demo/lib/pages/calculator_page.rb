@@ -5,7 +5,8 @@ require_relative 'base_page'
 class CalculatorPage < BasePage
   uri '/calculator.html{?query*}'
   text_field :operand1, id: 'operand1'
-  text_field :operand2, id: 'operand2'
+  # text_field :operand2, id: 'operand2'
+  text_field_writer :operand2, id: 'operand2'
   button :btn_add, id: 'op_add'
   button :btn_sub, id: 'op_sub'
   button :btn_mul, id: 'op_mul'
@@ -18,14 +19,14 @@ class CalculatorPage < BasePage
 
   def add(a, b)
     operand1.set a
-    operand2.set b
+    self.operand2 = b
     btn_add.click
     result_div.wait_until { |el| el.text.match(/\d/) }
   end
 
   def sub(a, b)
     operand1.set a
-    operand2.set b
+    self.operand2 = b
     btn_sub.click
     result_div.wait_until { |el| el.text.match(/\d/) }
   end
