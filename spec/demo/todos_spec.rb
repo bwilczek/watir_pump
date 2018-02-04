@@ -18,6 +18,7 @@ RSpec.describe 'ToDos page' do
         expect(page.welcome_modal).not_to be_visible
         page.open_welcome_modal
         expect(page.welcome_modal).to be_visible
+        expect(page.welcome_modal.title).to eq 'Welcome modal'
         page.welcome_modal.close
         expect(page.welcome_modal).not_to be_visible
       end
