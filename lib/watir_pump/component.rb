@@ -23,6 +23,20 @@ module WatirPump
         end
       end
 
+      # define *_reader methods that return .text for certain element types
+      # TODO: DRY up: very similar code is repeated above
+      %i[span div].each do |watir_method|
+        define_method "#{watir_method}_reader" do |name, *args|
+          define_method(name) do |*loc_args|
+            if args.first.is_a? Proc
+              instance_exec(*loc_args, &args.first).text
+            else
+              root.send(watir_method, *args).text
+            end
+          end
+        end
+      end
+
       def query(name, p)
         define_method(name) do |*args|
           instance_exec(*args, &p)
