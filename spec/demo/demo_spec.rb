@@ -3,15 +3,6 @@ require_relative 'lib/pages/calculator_page'
 require_relative 'lib/helpers/sinatra_helper'
 
 RSpec.describe 'Demo Sinatra App' do
-  before(:all) do
-    SinatraHelper.start
-    WatirPump.config.base_url = 'http://localhost:4567'
-  end
-
-  after(:all) do
-    SinatraHelper.stop
-  end
-
   it 'page method call' do
     IndexPage.open do |page, browser|
       page.goto_contact

@@ -3,15 +3,6 @@ require_relative 'lib/pages/calculator_page'
 require_relative 'lib/helpers/sinatra_helper'
 
 RSpec.describe 'Locators on Page' do
-  before(:all) do
-    SinatraHelper.start
-    WatirPump.config.base_url = 'http://localhost:4567'
-  end
-
-  after(:all) do
-    SinatraHelper.stop
-  end
-
   describe 'watir element' do
     it 'found for static watir locator' do
       IndexPage.open do |page, _browser|

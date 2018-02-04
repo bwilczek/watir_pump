@@ -3,15 +3,6 @@ require_relative 'lib/pages/index_page'
 require_relative 'lib/helpers/sinatra_helper'
 
 RSpec.describe 'Expectations' do
-  before(:all) do
-    SinatraHelper.start
-    WatirPump.config.base_url = 'http://localhost:4567'
-  end
-
-  after(:all) do
-    SinatraHelper.stop
-  end
-
   it 'waits for the result' do
     CalculatorPage.open do |page, _browser|
       page.add(2, 3)

@@ -2,15 +2,6 @@ require_relative 'lib/pages/todos_page'
 require_relative 'lib/helpers/sinatra_helper'
 
 RSpec.describe 'ToDos page' do
-  before(:all) do
-    SinatraHelper.start
-    WatirPump.config.base_url = 'http://localhost:4567'
-  end
-
-  after(:all) do
-    SinatraHelper.stop
-  end
-
   describe 'Welcome modal' do
     it 'opens and closes' do
       ToDosPage.open do |page, _browser|

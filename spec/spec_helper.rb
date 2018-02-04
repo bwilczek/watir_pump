@@ -1,4 +1,5 @@
 require 'watir_pump'
+require_relative 'demo/lib/helpers/sinatra_helper'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -27,9 +28,15 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   config.before(:suite) do
+    SinatraHelper.start
     WatirPump.configure do |c|
       c.browser = Watir::Browser.new
+      c.base_url = 'http://localhost:4567'
     end
+  end
+
+  config.after(:suite) do
+    SinatraHelper.stop
   end
 
   config.after(:each, watir: true) do
