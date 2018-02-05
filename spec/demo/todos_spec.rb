@@ -5,7 +5,6 @@ RSpec.describe 'ToDos page' do
   describe 'Welcome modal' do
     it 'opens and closes' do
       ToDosPage.open do |page, _browser|
-        # require 'pry' ; binding.pry
         expect(page.welcome_modal).not_to be_visible
         page.open_welcome_modal
         expect(page.welcome_modal).to be_visible

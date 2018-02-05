@@ -12,7 +12,45 @@
     <p>Hello WatirPump! Click on the [x] icon to close this modal.</p>
   </div>
 
-  <button id="welcome_modal_opener">Open WelcomeModal</button>
+  <div id="top_menu">
+    <button id="link_index">IndexPage</button>
+    <button id="link_calculator">CalculatorPage</button>
+    <button id="link_todos">ToDosPage</button>
+    <button id="welcome_modal_opener">Welcome</button>
+  </div>
+  <hr />
+
+  <div id="todos_home" role="todo_list">
+    <div role="title">Home</div>
+    <input role="new_item" /><button>Add</button>
+    <ul>
+      <li>Dishes<span role="rm">[rm]</span></li>
+      <li>Laundry<span role="rm">[rm]</span></li>
+      <li>Vacuum<span role="rm">[rm]</span></li>
+    </ul>
+  </div>
+
+  <div id="todos_work" role="todo_list">
+    <div role="title">Work</div>
+    <input role="new_item" /><button>Add</button>
+    <ul>
+      <li>Review the PR-1234<span role="rm">[rm]</span></li>
+      <li>Generate coverage report<span role="rm">[rm]</span></li>
+      <li>Update README.md<span role="rm">[rm]</span></li>
+    </ul>
+  </div>
+
+  <div id="todos_groceries" role="todo_list">
+    <div role="title">Groceries</div>
+    <input role="new_item" /><button>Add</button>
+    <ul>
+      <li>Bread<span role="rm">[rm]</span></li>
+      <li>Tomatos<span role="rm">[rm]</span></li>
+      <li>Green pesto<span role="rm">[rm]</span></li>
+    </ul>
+  </div>
+
+  <br class="clearBoth" />
 
   <script src="jquery-3.3.1.min.js"></script>
   <script src="jquery-ui.min.js"></script>
