@@ -18,6 +18,10 @@ $(function() {
     })
   });
 
+  setTimeout(() => {
+    $('div[role="todo_list"]').show()
+  }, delay)
+
   $('div[role="todo_list"] button').click((e) => {
     setTimeout(() => {
       let newText = e.target.parentNode.querySelector('input').value

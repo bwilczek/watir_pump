@@ -11,6 +11,7 @@ span[role="rm"] {
 }
 
 div[role="todo_list"] {
+  display: none;
   float: left;
   margin: 20px;
   width: 270px;

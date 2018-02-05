@@ -16,4 +16,12 @@ RSpec.describe 'ToDos page' do
       end
     end
   end
+
+  describe 'ToDo lists' do
+    it 'is loaded when ToDo lists are present' do
+      ToDosPage.open(query: { random_delay: true }) do |page, _browser|
+        expect(page.todo_lists).to be_present
+      end
+    end
+  end
 end
