@@ -27,14 +27,14 @@ RSpec.describe 'ToDos page' do
 
     it 'has properly defined page model' do
       ToDosPage.open do |page, _browser|
-        home_items = page.todo_lists.find { |l| l.title == 'Home' }.items.map(&:name)
+        home_items = page['Home'].items.map(&:name)
         expect(home_items).to include('Dishes', 'Laundry', 'Vacuum')
       end
     end
 
     it 'adds item to list' do
       ToDosPage.open(query: { random_delay: true }) do |page, _browser|
-        home_todo_list = page.todo_lists.find { |l| l.title == 'Home' }
+        home_todo_list = page['Home']
         home_todo_list.add('Ironing')
         expect(home_todo_list.items.map(&:name)).to include('Ironing')
       end
@@ -42,7 +42,7 @@ RSpec.describe 'ToDos page' do
 
     it 'removes item from list' do
       ToDosPage.open(query: { random_delay: true }) do |page, _browser|
-        home_todo_list = page.todo_lists.find { |l| l.title == 'Home' }
+        home_todo_list = page['Home']
         home_todo_list.remove('Laundry')
         expect(home_todo_list.items.map(&:name)).not_to include('Laundry')
       end

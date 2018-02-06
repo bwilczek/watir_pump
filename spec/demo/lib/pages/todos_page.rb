@@ -14,4 +14,8 @@ class ToDosPage < WatirPump::Page
   query :open_welcome_modal, -> { btn_open_welcome_modal.click }
 
   components :todo_lists, ToDoList, :divs, role: 'todo_list'
+
+  def [](title)
+    todo_lists.find { |l| l.title == title }
+  end
 end
