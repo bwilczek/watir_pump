@@ -3,7 +3,7 @@ body{
   margin: 20px;
 }
 
-span[role="rm"] {
+a[role="rm"] {
   font-size: smaller;
   cursor: pointer;
   color: #a22;

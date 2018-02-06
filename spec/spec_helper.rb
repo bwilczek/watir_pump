@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'watir_pump'
 require_relative 'demo/lib/helpers/sinatra_helper'
 
@@ -28,6 +30,7 @@ RSpec.configure do |config|
   Kernel.srand config.seed
 
   config.before(:suite) do
+    Watir.default_timeout = 5
     SinatraHelper.start
     WatirPump.configure do |c|
       c.browser = Watir::Browser.new

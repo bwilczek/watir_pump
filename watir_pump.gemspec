@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |s|
@@ -10,7 +12,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.homepage     = 'https://github.com/bwilczek/watir_pump'
   s.license      = 'MIT'
-  s.required_ruby_version = '~> 2.2'
+  s.required_ruby_version = '~> 2.4'
   s.add_dependency 'activesupport', '~> 4.0'
   s.add_dependency 'addressable', '~> 2.5'
   s.add_dependency 'watir', '~> 6.10'

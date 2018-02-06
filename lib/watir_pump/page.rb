@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'addressable/template'
 require_relative 'component'
 

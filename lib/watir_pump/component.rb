@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'component_collection'
 require 'forwardable'
 
@@ -15,7 +17,7 @@ module WatirPump
       Watir::Container.instance_methods(false).each do |watir_method|
         define_method watir_method do |name, *args|
           define_method(name) do |*loc_args|
-            if args.first.is_a? Proc
+            if args&.first.is_a? Proc
               instance_exec(*loc_args, &args.first)
             else
               root.send(watir_method, *args)
@@ -43,6 +45,16 @@ module WatirPump
           send(watir_method, "#{name}_element", *args)
           define_method("#{name}=") do |value|
             send("#{name}_element").set value
+          end
+        end
+      end
+
+      # Methods for element clickers
+      %i[button link].each do |watir_method|
+        define_method "#{watir_method}_clicker" do |name, *args|
+          send(watir_method, "#{name}_element", *args)
+          define_method(name) do
+            send("#{name}_element").click
           end
         end
       end

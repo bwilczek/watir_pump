@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'forwardable'
 
 module WatirPump
@@ -5,7 +7,7 @@ module WatirPump
     extend Forwardable
 
     delegate Enumerable.instance_methods(false) => :@arr
-    delegate %i[[] empty?] => :@arr
+    delegate %i[[] empty? each] => :@arr
 
     def initialize(arr)
       @arr = arr

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module SinatraHelper
-  LOG_PATH = '/tmp/watir_pump_sinatra.log'.freeze
+  LOG_PATH = '/tmp/watir_pump_sinatra.log'
 
   class << self
     def start

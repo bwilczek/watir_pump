@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'watir_pump'
 
 require_relative '../components/top_menu'

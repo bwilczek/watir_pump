@@ -30,12 +30,15 @@ $(function() {
       }
       let ul = e.target.parentNode.querySelector('ul')
       let newLi = document.createElement('li')
-      let rmSpan = document.createElement('span')
-      rmSpan.setAttribute('role', 'rm')
-      rmSpan.onclick = rmTodoItem
-      newLi.innerText = newText
-      rmSpan.innerText = '[rm]'
-      newLi.appendChild(rmSpan)
+      let nameSpan = document.createElement('span')
+      nameSpan.innerText = newText
+      nameSpan.setAttribute('role', 'name')
+      let rmA = document.createElement('a')
+      rmA.setAttribute('role', 'rm')
+      rmA.onclick = rmTodoItem
+      rmA.innerText = '[rm]'
+      newLi.appendChild(nameSpan)
+      newLi.appendChild(rmA)
       ul.appendChild(newLi)
       e.target.parentNode.querySelector('input').value = ''
     }, delay)
@@ -48,7 +51,7 @@ $(function() {
     }, delay)
   }
 
-  $('span[role="rm"]').click(rmTodoItem)
+  $('a[role="rm"]').click(rmTodoItem)
 
   $('#welcome_modal_opener').on('click', function() {
     $('#welcome_modal').dialog('open');
