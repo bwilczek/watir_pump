@@ -2,7 +2,6 @@
 
 require_relative 'lib/pages/index_page'
 require_relative 'lib/pages/calculator_page'
-require_relative 'lib/helpers/sinatra_helper'
 
 RSpec.describe 'Demo Sinatra App' do
   it 'page method call' do

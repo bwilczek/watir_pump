@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'lib/pages/index_page'
-require_relative 'lib/helpers/sinatra_helper'
 
 RSpec.describe 'Table' do
   it '#cols' do

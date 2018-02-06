@@ -11,36 +11,49 @@ module WatirPump
         @uri
       end
 
-      def url_template
-        WatirPump.config.base_url + uri
-      end
-
       def open(params = {}, &blk)
-        url = Addressable::Template.new(url_template).expand(params).to_s
-        instance.browser.goto url
-        use(&blk) if block_given?
+        instance.open(params, &blk)
       end
 
       def browser
         instance.browser
       end
 
-      def loaded?
-        Addressable::Template.new(url_template).match browser.url
-      end
-
-      def use
-        Watir::Wait.until(message: "Timeout waiting for #{self} to load") do
-          instance.loaded?
-        end
-        yield instance, instance.browser
+      def use(&blk)
+        instance.use(&blk)
       end
       alias act use
+
+      def loaded?
+        Addressable::Template.new(instance.url_template).match browser.url
+      end
 
       def instance
         @instance ||= new(WatirPump.config.browser)
       end
     end # << self
+
+    def open(params = {}, &blk)
+      url = Addressable::Template.new(url_template).expand(params).to_s
+      browser.goto url
+      use(&blk) if block_given?
+    end
+
+    def use
+      wait_for_loaded
+      yield self, browser
+    end
+    alias act use
+
+    def url_template
+      WatirPump.config.base_url + self.class.uri
+    end
+
+    def wait_for_loaded
+      Watir::Wait.until(message: "Timeout waiting for #{self} to load") do
+        loaded?
+      end
+    end
 
     def loaded?
       self.class.loaded?

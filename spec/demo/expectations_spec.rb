@@ -2,7 +2,6 @@
 
 require_relative 'lib/pages/calculator_page'
 require_relative 'lib/pages/index_page'
-require_relative 'lib/helpers/sinatra_helper'
 
 RSpec.describe 'Expectations' do
   it 'waits for the result' do
