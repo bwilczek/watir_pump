@@ -6,8 +6,7 @@ require_relative 'lib/pages/calculator_page'
 RSpec.describe 'Page constructor' do
   it 'navigates across pages' do
     browser = WatirPump.config.browser
-    page = IndexPage.new(browser)
-    page.open
+    page = IndexPage.new(browser).open
     page.top_menu.calculator.click
     expect(browser.url).to include('calculator.html')
     page = CalculatorPage.new(browser)

@@ -37,11 +37,13 @@ module WatirPump
       url = Addressable::Template.new(url_template).expand(params).to_s
       browser.goto url
       use(&blk) if block_given?
+      self
     end
 
     def use
       wait_for_loaded
       yield self, browser
+      self
     end
     alias act use
 
