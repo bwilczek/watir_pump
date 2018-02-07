@@ -1,12 +1,17 @@
 **Table of contents**
 * [Introduction](#introduction)
+* [Examples](#examples)
+    * [Step 1: Just Watir elements](#step-1-just-watir-elements)
+    * [Step 2: Make it a component](#step-2-make-it-a-component)
+    * [Step 3: Make it more elegant and ready for Ajax](#step-3-make-it-more-elegant-and-ready-for-ajax)
+* [Core concepts](#core-concepts)
 
 # Introduction
 
 Another approach to `PageObject` pattern for `Watir`. Heavily inspired by `SitePrism`
 and `Watirsome`.
 
-# Example
+# Examples
 
 Imagine a page that contains three ToDo lists. Or maybe just clone this repo and
 open `sinatra_app/public/todos.html` in your browser instead. This page will serve
@@ -67,7 +72,7 @@ Additionally in this iteration constructs of `_reader`, `_writer` and `_clicker`
 are introduced. Instead of generating methods that return `Watir` elements they
 perform certain actions at once.
 
-| Page class declaration | usage |
+| Declaration in page class | usage |
 |-------------|-------|
 | `span :name, id: 'abc'` | `n = page.name.text` |
 | `span_reader :name, id: 'abc'` | `n = page.name` |
