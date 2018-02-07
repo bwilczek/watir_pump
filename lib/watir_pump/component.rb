@@ -86,6 +86,13 @@ module WatirPump
           ComponentCollection.new(nodes.map { |n| klass.new(browser, self, n) })
         end
       end
+
+      def decorate(method, klass)
+        alias_method "#{method}_original".to_sym, method
+        define_method method do |*args|
+          klass.new(send("#{method}_original", *args))
+        end
+      end
     end
 
     def initialize(browser, parent = nil, root_node = nil)

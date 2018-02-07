@@ -4,6 +4,7 @@ require 'watir_pump'
 
 require_relative '../components/welcome_modal'
 require_relative '../components/todo_list'
+require_relative '../components/todo_list_collection'
 
 class ToDosPage < WatirPump::Page
   uri '/todos.html{?query*}'
@@ -14,8 +15,5 @@ class ToDosPage < WatirPump::Page
   query :open_welcome_modal, -> { btn_open_welcome_modal.click }
 
   components :todo_lists, ToDoList, :divs, role: 'todo_list'
-
-  def [](title)
-    todo_lists.find { |l| l.title == title }
-  end
+  decorate :todo_lists, ToDoListCollection
 end
