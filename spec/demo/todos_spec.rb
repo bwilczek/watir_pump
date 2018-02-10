@@ -18,6 +18,16 @@ RSpec.describe 'ToDos page' do
     end
   end
 
+  describe 'region' do
+    it 'works not nested' do
+      ToDosPage.open do |page, _browser|
+        expect(page.welcome_modal).not_to be_visible
+        page.top_menu.welcome
+        expect(page.welcome_modal).to be_visible
+      end
+    end
+  end
+
   describe 'ToDo lists' do
     it 'is loaded when ToDo lists are present' do
       ToDosPage.open(query: { random_delay: true }) do |page, _browser|

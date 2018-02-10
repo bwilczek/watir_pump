@@ -14,6 +14,10 @@ class ToDosPage < WatirPump::Page
   button :btn_open_welcome_modal, id: 'welcome_modal_opener'
   query :open_welcome_modal, -> { btn_open_welcome_modal.click }
 
+  region :top_menu, :div, id: 'top_menu' do
+    button_clicker :welcome, id: 'welcome_modal_opener'
+  end
+
   components :todo_lists, ToDoList, :divs, role: 'todo_list'
   decorate :todo_lists, ToDoListCollection
 end

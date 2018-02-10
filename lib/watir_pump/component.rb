@@ -65,6 +65,11 @@ module WatirPump
         end
       end
 
+      def region(name, loc_method = nil, *loc_args, &blk)
+        klass = Class.new(Component) { instance_exec(&blk) }
+        component(name, klass, loc_method, *loc_args)
+      end
+
       def component(name, klass, loc_method = nil, *loc_args)
         define_method(name) do |*args|
           node = if loc_method.is_a? Proc
