@@ -1,37 +1,26 @@
 # frozen_string_literal: true
 
+require 'forwardable'
 require 'addressable/template'
 require_relative 'component'
 
 module WatirPump
   class Page < Component
     class << self
+      extend Forwardable
+
+      INSTANCE_DELEGATED_METHODS = %i[
+        browser
+        open open_yield open_dsl
+        use use_yield use_dsl
+        act act_yield use_dsl
+      ].freeze
+      delegate INSTANCE_DELEGATED_METHODS => :instance
+
       def uri(uri = nil)
         @uri = uri unless uri.nil?
         @uri
       end
-
-      def open(params = {}, &blk)
-        instance.open(params, &blk)
-      end
-
-      def open_yield(params = {}, &blk)
-        instance.open_yield(params, &blk)
-      end
-
-      def browser
-        instance.browser
-      end
-
-      def use(&blk)
-        instance.use(&blk)
-      end
-      alias act use
-
-      def use_yield(&blk)
-        instance.use_yield(&blk)
-      end
-      alias act_yield use_yield
 
       def loaded?
         Addressable::Template.new(instance.url_template).match browser.url
@@ -42,6 +31,14 @@ module WatirPump
       end
     end # << self
 
+    def open(params = {}, &blk)
+      if WatirPump.config.call_page_blocks_with_yield
+        open_yield(params, &blk)
+      else
+        open_dsl(params, &blk)
+      end
+    end
+
     def open_yield(params = {}, &blk)
       url = Addressable::Template.new(url_template).expand(params).to_s
       browser.goto url
@@ -49,12 +46,21 @@ module WatirPump
       self
     end
 
-    def open(params = {}, &blk)
+    def open_dsl(params = {}, &blk)
       url = Addressable::Template.new(url_template).expand(params).to_s
       browser.goto url
-      use(&blk) if block_given?
+      use_dsl(&blk) if block_given?
       self
     end
+
+    def use(&blk)
+      if WatirPump.config.call_page_blocks_with_yield
+        use_yield(&blk)
+      else
+        use_dsl(&blk)
+      end
+    end
+    alias act use
 
     def use_yield
       wait_for_loaded
@@ -63,12 +69,12 @@ module WatirPump
     end
     alias act_yield use_yield
 
-    def use(&blk)
+    def use_dsl(&blk)
       wait_for_loaded
       instance_exec(&blk)
       self
     end
-    alias act use
+    alias act_dsl use_dsl
 
     def url_template
       WatirPump.config.base_url + self.class.uri

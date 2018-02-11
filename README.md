@@ -9,6 +9,12 @@
     * [Step 2: Make it a component](#step-2-make-it-a-component)
     * [Step 3: Make it more elegant and ready for Ajax](#step-3-make-it-more-elegant-and-ready-for-ajax)
 * [Core concepts](#core-concepts)
+    * [Configuration](#core-concepts)
+    * [Page](#page)
+    * [Component](#component)
+        * [Locating elements/components](#locating-elementscomponents)
+    * [ComponentCollection](#componentcollection)
+    * [Decoration](#decoration)
 
 # Introduction
 
@@ -76,7 +82,7 @@ Additionally in this iteration constructs of `_reader`, `_writer` and `_clicker`
 are introduced. Instead of generating methods that return `Watir` elements they
 perform certain actions at once.
 
-| Declaration in page class | usage |
+| Declaration in page class | action usage |
 |-------------|-------|
 | `span :name, id: 'abc'` | `n = page.name.text` |
 | `span_reader :name, id: 'abc'` | `n = page.name` |
@@ -105,6 +111,7 @@ class ToDosPage < WatirPump::Page
 end
 
 RSpec.describe ToDosPage do
+  before(:each) { |example| WatirPump.config.current_example = example }
   before :all do
     WatirPump.configure do |c|
       c.base_url = 'http://localhost:4567'
@@ -114,8 +121,8 @@ RSpec.describe ToDosPage do
 
   it 'adds an item to the "Home" ToDo list' do
     # another way of opening and accessing page
-    ToDosPage.open do |page|
-      home_todo_list = page.todo_lists.find { |l| l.title == 'Home' }
+    ToDosPage.open do
+      home_todo_list = todo_lists.find { |l| l.title == 'Home' }
       home_todo_list.new_item = 'Ironing'
       home_todo_list.btn_add
       new_items = home_todo_list.items.map(&:name)
@@ -127,7 +134,15 @@ end
 
 ## Step 3: Make it more elegant and ready for Ajax
 
-`query`
+The new concept introduced here is the use of `query` class macro. It is a shorthand
+to generate simple methods, usually to query DOM tree with Watir. Examples:
+
+```ruby
+query :items_text, -> { item_elements.map(&:name) }
+query :items_cnt, -> { item_elements.count }
+```
+
+And now the improved example:
 
 ```ruby
 # ToDoListItem stays same as before
@@ -174,9 +189,9 @@ RSpec.describe ToDosPage do
   # setup omitted for brevity
 
   it 'adds an item to the "Home" ToDo list' do
-    ToDosPage.open do |page|
+    ToDosPage.open do
       # possible thanks to decoration of todo_lists in ToDosPage
-      home_todo_list = page.todo_lists['Home']
+      home_todo_list = todo_lists['Home']
       home_todo_list.add('Ironing')
       expect(home_todo_list.items).to include('Ironing')
     end
@@ -188,14 +203,123 @@ end
 
 ## Configuration
 
+_under construction_
+
 ## Page
 
-## Addressing elements/components
+Page class definition consists of a set of class marcos invocation. The one required
+to access the page is `uri`, which is the URL part that is relative to `WatirPump.config.base_url`.
+
+### URI
+
+It can be parametrized like this:
+```ruby
+uri "/users{/username}"
+ # =>
+UserPage.open(username: 'boromir')
+
+uri "/search{?query*}"
+# =>
+SearchPage.open(query: { phrase: 'watir', offset: 50, limit: 100 })
+```
+
+See [addressable gem](https://github.com/sporkmonger/addressable)
+for more information about the URL template format.
+
+### List of elements (inherited from Component)
+
+_under construction_
+
+### Interacting with pages
+
+Let's consider the following pages (simplified declaration):
+
+```ruby
+class SearchFormPage < WatirPump::Page
+  uri '/search'
+  text_field :phrase, id: 'q'
+  button :search, id: 'btnG'
+end
+
+class SearchResultsPage < WatirPump::Page
+  uri '/results'
+  divs :results, class: 'result-item'
+end
+```
+
+There are three ways that page objects can be interacted with
+
+```ruby
+# 1. DSL like style.
+####################
+# Block is evaluated in scope of the Page object
+# Looks nice (no need to type 'page.') but methods visible in the spec
+# are not visible in the block. The only exception are the RSpec methods
+
+WatirPump.config.call_page_blocks_with_yield = false # this is default
+
+# this is required to make rspec expectations work inside the block
+before(:each) { |example| WatirPump.config.current_example = example }
+
+ToDosPage.open do
+  phrase.set 'watir'
+  search.click
+end
+SearchResultsPage.use do
+  expect(results.cnt).to be > 0
+end
+
+# 2. A regular yield
+####################
+# A regular block. page and object references are passed as params to yield
+
+WatirPump.config.call_page_blocks_with_yield = true
+
+ToDosPage.open do |page, _browser|
+  page.phrase.set 'watir'
+  page.search.click
+end
+SearchResultsPage.use do |page, _browser|
+  expect(page.results.cnt).to be > 0
+end
+
+# Internally Page.open/Page.use methods uses one of:
+#   Page.open_yield Page.use_yield
+#   Page.open_dsl   Page.use_dsl
+# depending on the value of config field call_page_blocks_with_yield
+# These methods can be called directly if there is a need to mix the approaches
+
+# 3. No magic, the regular Page Object Pattern way
+###################
+page = ToDosPage.new(browser)
+page.phrase.set 'watir'
+page.search.click
+page = SearchResultsPage.new(browser)
+expect(page.results.cnt).to be > 0
+
+# alternatively, assuming that method ToDosPage#do_search will wait for the results
+search_page = ToDosPage.new(browser)
+results_page = search_page.do_search('watir')
+expect(results_page.results.cnt).to be > 0
+```
+
+## Component
+
+_under construction_
+
+* can be nested
+* class macros for list of page elements, or sub-components
+
+### Locating elements/components
 
 * watir methods
 * lambdas
 * lamdbas with parameters
 
-## Component
-
 ## ComponentCollection
+
+_under construction_
+
+## Decoration
+
+_under construction_

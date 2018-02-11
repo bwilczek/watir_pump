@@ -35,6 +35,7 @@ RSpec.configure do |config|
     WatirPump.configure do |c|
       c.browser = Watir::Browser.new
       c.base_url = 'http://localhost:4567'
+      c.call_page_blocks_with_yield = false
     end
   end
 
