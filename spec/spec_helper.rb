@@ -38,12 +38,16 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:suite) do
-    SinatraHelper.stop
+  config.before(:each) do |example|
+    WatirPump.config.current_example = example
   end
 
   config.after(:each, watir: true) do
     WatirPump.config.browser.cookies.clear
     WatirPump.config.browser.goto('about:blank')
+  end
+
+  config.after(:suite) do
+    SinatraHelper.stop
   end
 end

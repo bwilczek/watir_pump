@@ -5,25 +5,25 @@ require_relative 'lib/pages/calculator_page'
 
 RSpec.describe 'Demo Sinatra App' do
   it 'page method call' do
-    IndexPage.open do |page, browser|
-      page.goto_contact
+    IndexPage.open do
+      goto_contact
       expect(browser.url).to include('contact.html')
     end
   end
 
   it 'URL params' do
-    CalculatorPage.open(query: { operand1: 2, operand2: 4 }) do |_page, browser|
+    CalculatorPage.open(query: { operand1: 2, operand2: 4 }) do
       expect(browser.url).to include('operand1=2&operand2=4')
     end
   end
 
   it 'navigates across pages' do
-    IndexPage.open do |page, browser|
-      page.top_menu.calculator.click
+    IndexPage.open do
+      top_menu.calculator.click
       expect(browser.url).to include('calculator.html')
     end
-    CalculatorPage.act do |page, _browser|
-      expect(page.operand1).to be_visible
+    CalculatorPage.act do
+      expect(operand1).to be_visible
     end
   end
 end

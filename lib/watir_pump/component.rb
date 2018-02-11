@@ -113,5 +113,19 @@ module WatirPump
       ret.class.name.include?('Collection') ? ret.first : ret
     end
     alias node root
+
+    def method_missing(name, *args)
+      # delegate missing methods to current RSpec example if set
+      example = WatirPump.config.current_example
+      if example&.instance_exec { respond_to? name }
+        return example.instance_exec { send(name, *args) }
+      end
+      super
+    end
+
+    def respond_to_missing?(name, include_private = false)
+      example = WatirPump.config.current_example
+      example&.instance_exec { respond_to? name } || super
+    end
   end
 end
