@@ -21,6 +21,82 @@
 Another approach to `PageObject` pattern for `Watir`. Heavily inspired by `SitePrism`
 and `Watirsome`.
 
+## Key features
+
+#### DSL to describe pages
+
+```ruby
+class SeachPage < WatirPump::Page
+  text_field :query_input, id: 'query'
+  button :search_button, id: 'btnG'
+end
+```
+
+Class macro methods (here: `text_field`, `button`) act as a proxy to `watir` element locator methods with same names.
+
+#### DSL to interact with pages
+
+```ruby
+SearchPage.open do
+  query_input.set 'Watir'
+  search_button.click
+end
+```
+
+#### Nestable components
+
+```ruby
+class SubComponent < WatirPump::Component
+  # some elements
+end
+
+class LoginBox < WatirPump::Component
+  component :sub, SubComponent, -> { root.div(class: 'resetPassword') }
+  text_field :username, id: 'user'
+  text_field :password, id: 'pass'
+  button :login, id: 'login'
+end
+
+class HomePage < WatirPump::Page
+  component login_box, LoginBox, -> { root.div(id: 'login_box') }
+
+  def do_login(user, pass)
+    login_box.username.set user
+    login_box.password.set pass
+    login_box.login.click
+  end
+end
+```
+
+#### Macros for action on element
+
+```ruby
+class LoginPage < WatirPump::Page
+  text_field_writer :username, id: 'user'
+  text_field_writer :password, id: 'pass'
+  button_clicker :login, id: 'login'
+end
+
+LoginPage.open do
+  username = 'bob'     # same as element.set 'bob'
+  password = '$3crEt'  # same as element.set '$3crEt'
+  login                # same as element.click
+end
+```
+
+#### Support for pages with parametrized URLs
+
+```ruby
+class SearchResults < WatirPump::Page
+  url '/search{/phrase}'
+  divs :results, class: 'result-item'
+end
+
+SearchResults.open(phrase: 'watir') do
+  expect(results.count).to be > 0
+end
+```
+
 # Examples
 
 Imagine a page that contains three ToDo lists. Or maybe just clone this repo and
