@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
 require_relative 'component_collection'
+require_relative 'constants'
 require 'forwardable'
 
 module WatirPump
   class Component
     extend Forwardable
+
+    include Constants
 
     delegate %i[visible? present?] => :root
 
@@ -30,7 +33,7 @@ module WatirPump
       # span_reader, :title, id: asd
       # will create methods :title and :title_element
       # where :title is a shortcut for :title_element.text
-      %i[span div].each do |watir_method|
+      Constants::READABLES.each do |watir_method|
         define_method "#{watir_method}_reader" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           define_method(name) do
@@ -40,7 +43,7 @@ module WatirPump
       end
 
       # Methods for element content writers
-      %i[text_field].each do |watir_method|
+      Constants::WRITABLES.each do |watir_method|
         define_method "#{watir_method}_writer" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           define_method("#{name}=") do |value|
@@ -50,7 +53,7 @@ module WatirPump
       end
 
       # Methods for element clickers
-      %i[button link].each do |watir_method|
+      Constants::CLICKABLES.each do |watir_method|
         define_method "#{watir_method}_clicker" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           define_method(name) do
