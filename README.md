@@ -68,7 +68,29 @@ class HomePage < WatirPump::Page
 end
 ```
 
-#### Macros for action on element
+#### Regions (anonymous components)
+
+If certain part appear only on one page (no point in creating another `Component` class)
+it can be declared in place, as a region (anonymous component), which will just act as
+an name space in the `Page` class.
+
+```ruby
+class HomePage < WatirPump::Page
+  region :login_box do
+    text_field :username, id: 'user'
+    text_field :password, id: 'pass'
+    button :login, id: 'login'
+  end
+
+  def do_login(user, pass)
+    login_box.username.set user
+    login_box.password.set pass
+    login_box.login.click
+  end
+end
+```
+
+#### Element action macros
 
 ```ruby
 class LoginPage < WatirPump::Page
@@ -302,7 +324,13 @@ SearchPage.open(query: { phrase: 'watir', offset: 50, limit: 100 })
 See [addressable gem](https://github.com/sporkmonger/addressable)
 for more information about the URL template format.
 
-### List of elements (inherited from Component)
+### Elements and components
+
+* watir methods
+* lambdas
+* lamdbas with parameters
+
+### Element action macros
 
 _under construction_
 
@@ -386,11 +414,9 @@ _under construction_
 * can be nested
 * class macros for list of page elements, or sub-components
 
-### Locating elements/components
+## Region aka anonymous component
 
-* watir methods
-* lambdas
-* lamdbas with parameters
+_under construction_
 
 ## ComponentCollection
 
@@ -399,3 +425,5 @@ _under construction_
 ## Decoration
 
 _under construction_
+
+Possible caveat: check if multiple decorations work properly.
