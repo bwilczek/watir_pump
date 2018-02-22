@@ -27,7 +27,7 @@ GEM
       concurrent-ruby (~> 1.0)
     method_source (0.9.0)
     minitest (5.11.3)
-    mustermann (1.0.1)
+    mustermann (1.0.2)
     parallel (1.12.1)
     parser (2.4.0.2)
       ast (~> 2.3)
@@ -36,8 +36,8 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
     public_suffix (3.0.1)
-    rack (2.0.3)
-    rack-protection (2.0.0)
+    rack (2.0.4)
+    rack-protection (2.0.1)
       rack
     rainbow (3.0.0)
     rspec (3.7.0)
@@ -65,10 +65,10 @@ GEM
     selenium-webdriver (3.8.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.0)
-    sinatra (2.0.0)
+    sinatra (2.0.1)
       mustermann (~> 1.0)
       rack (~> 2.0)
-      rack-protection (= 2.0.0)
+      rack-protection (= 2.0.1)
       tilt (~> 2.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
@@ -85,7 +85,7 @@ DEPENDENCIES
   pry (~> 0.11)
   rspec (~> 3.7)
   rubocop (~> 0.52)
-  sinatra (~> 2.0)
+  sinatra (> 2.0.0)
   watir_pump!
 
 BUNDLED WITH

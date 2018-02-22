@@ -9,10 +9,11 @@
     * [Step 2: Make it a component](#step-2-make-it-a-component)
     * [Step 3: Make it more elegant and ready for Ajax](#step-3-make-it-more-elegant-and-ready-for-ajax)
 * [Core concepts](#core-concepts)
-    * [Configuration](#core-concepts)
+    * [Configuration](#configuration)
     * [Page](#page)
+      * [Element and components](#elements-and-components)
+      * [Element action macros](#element-action-macros-1)
     * [Component](#component)
-        * [Locating elements/components](#locating-elementscomponents)
     * [ComponentCollection](#componentcollection)
     * [Decoration](#decoration)
 
@@ -301,7 +302,30 @@ end
 
 ## Configuration
 
-_under construction_
+`WatirPump` includes `ActiveSupport::Configurable` - a popular concept known from `Rails`.
+
+The following settings are required to start:
+
+```ruby
+WatirPump.configure do |c|
+  # Watir::Browser instance
+  c.browser = Watir::Browser.new
+
+  # Self explanatory: root URL for the application under test
+  c.base_url = 'http://localhost:4567'
+
+  # Flag defining execution context of blocks passed to Page.use and Page.open
+  #   true  - block is evaluated with yield and accepts |page, browser| arguments
+  #   false - block is evaluated with instance_exec on Page (default)
+  c.call_page_blocks_with_yield = false
+end
+```
+
+To make `rspec` work with page DSL the following key has to be set:
+
+```ruby
+before(:each) { |example| WatirPump.config.current_example = example }
+```
 
 ## Page
 
