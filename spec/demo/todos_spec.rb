@@ -30,10 +30,18 @@ RSpec.describe 'ToDos page' do
   end
 
   describe 'region' do
-    it 'works not nested' do
+    it 'works not nested for watir locator' do
       ToDosPage.open do
         expect(welcome_modal).not_to be_visible
         top_menu.welcome
+        expect(welcome_modal).to be_visible
+      end
+    end
+
+    it 'works not nested for lambda locator' do
+      ToDosPage.open do
+        expect(welcome_modal).not_to be_visible
+        top_menu2.welcome
         expect(welcome_modal).to be_visible
       end
     end

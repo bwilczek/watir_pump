@@ -11,7 +11,7 @@
 * [Core concepts](#core-concepts)
     * [Configuration](#configuration)
     * [Page](#page)
-      * [uri](#uri)
+      * [uri & loaded?](#uri--loaded)
       * [Element and components](#elements-and-components)
       * [Element action macros](#element-action-macros-1)
       * [Interacting with pages](#interacting-with-pages)
@@ -79,7 +79,7 @@ a name space in the `Page` object.
 
 ```ruby
 class HomePage < WatirPump::Page
-  region :login_box do
+  region :login_box, :div, id: 'login_box' do
     text_field :username, id: 'user'
     text_field :password, id: 'pass'
     button :login, id: 'login'
@@ -174,23 +174,13 @@ end
 ## Step 2: Make it a component
 
 The previous example works fine for a page containing just one ToDo list.
-Let's encapsulate the elements into a `Component`, so that it could be reused
+Let's encapsulate the elements into a [Component](#component), so that it could be reused
 on multiple pages, or even on one page.
 
 Components can be nested, and grouped into `ComponentCollections`.
 
-Additionally in this iteration constructs of `_reader`, `_writer` and `_clicker`
-are introduced. Instead of generating methods that return `Watir` elements they
-perform certain actions at once.
-
-| Declaration in page class | action usage |
-|-------------|-------|
-| `span :name, id: 'abc'` | `n = page.name.text` |
-| `span_reader :name, id: 'abc'` | `n = page.name` |
-| `link :goto_contacts, id: 'abc'` | `page.goto_contacts.click` |
-| `link_clicker :goto_contacts, id: 'abc'` | `page.goto_contacts` |
-| `text_field :email, id: 'abc'` | `page.email.set 'john@example.com'` |
-| `text_field_writer :email, id: 'abc'` | `page.email = 'john@example.com'` |
+Additionally in this iteration [element action macros](#element-action-macros-1) are introduced.
+Instead of generating methods that return `Watir` elements they perform certain actions at once.
 
 ```ruby
 class ToDoList < WatirPump::Component
@@ -235,13 +225,7 @@ end
 
 ## Step 3: Make it more elegant and ready for Ajax
 
-The new concept introduced here is the use of `query` class macro. It is a shorthand
-to generate simple methods, usually to query DOM tree with Watir. Examples:
-
-```ruby
-query :items_text, -> { item_elements.map(&:name) }
-query :items_cnt, -> { item_elements.count }
-```
+The new concept introduced here is the [query](#query) class macro.
 
 And now the improved example:
 
@@ -351,7 +335,7 @@ WatirPump.config.base_url = 'https://myapp.local:8080'
 class ContactPage
   uri "/contact"
 end
- # =>
+
 ContactPage.open
  # => https://myapp.local:8080/contact
 ```
@@ -362,9 +346,9 @@ ContactPage.open
 class UserPage
   uri "/users{/username}"
 end
- # =>
+
 UserPage.open(username: 'boromir')
-# => https://myapp.local:8080/users/boromir
+ # => https://myapp.local:8080/users/boromir
 ```
 
 #### URI with a query string
@@ -372,9 +356,9 @@ UserPage.open(username: 'boromir')
 class UserPage
   uri "/search{?query*}"
 end
- # =>
+
 SearchPage.open(query: { phrase: 'watir', offset: 50, limit: 100 })
-# => https://myapp.local:8080/search?phrase=watir&offset=50&limit=100
+ # => https://myapp.local:8080/search?phrase=watir&offset=50&limit=100
 ```
 
 #### Customized `loaded?` condition
@@ -383,11 +367,11 @@ class HeavyReactPage
   uri "/spa"
   query :loaded?, -> { root.div(class: 'ajax-fetched-content').visible? }
 end
- # =>
+
 HeavyReactPage.open do
-  puts 'This line will execute once JS renders the element referenced in loaded? method'
+  # 'This will execute once JS renders the element referenced in loaded? method'
 end
-# => https://myapp.local:8080/spa
+ # => https://myapp.local:8080/spa
 ```
 
 See [addressable gem](https://github.com/sporkmonger/addressable)
@@ -395,18 +379,67 @@ for more information about the URL template format.
 
 ### Elements and components
 
-* watir methods
+* root (vs browser)
+* watir methods `Watir::Container`
 * lambdas
 * lamdbas with parameters
-* root (vs browser)
 
 ### `query` macro
 
-_under construction_
+It is a shorthand to generate simple methods, usually to query DOM tree with Watir. Examples:
+
+```ruby
+class SamplePage
+  spans :items, class: 'search-result'
+
+  # regular methods
+  def items_text
+    items.map(&:text)
+  end
+
+  def items_cnt
+    items.count
+  end
+
+  def items_with_substring(phrase)
+    items_text.select { |item| item.include? phrase }
+  end
+
+  # query class macro equivalent
+  query :items_text, -> { items.map(&:text) }
+  query :items_cnt, -> { items.count }
+  query :items_with_substring ->(phrase) { items_text.select { |item| item.include? phrase } }
+end
+```
+
+As one can see `query` macro is not specific to Watir, it's just a general purpose shorthand to define methods.
 
 ### Element action macros
 
-_under construction_
+There are cases where certain page element is used only to perform one action: either click, write into, or read value.
+In such case it would be more convenient to have a page object method that would perform that action at once, instead of returning the Watir element.
+
+Element actions macros are design to do just that.
+
+| Declaration in page class                | Element action example              |
+|------------------------------------------|-------------------------------------|
+| `span :name, id: 'abc'`                  | `n = page.name.text`                |
+| `span_reader :name, id: 'abc'`           | `n = page.name`                     |
+| `link :goto_contacts, id: 'abc'`         | `page.goto_contacts.click`          |
+| `link_clicker :goto_contacts, id: 'abc'` | `page.goto_contacts`                |
+| `text_field :email, id: 'abc'`           | `page.email.set 'john@example.com'` |
+| `text_field_writer :email, id: 'abc'`    | `page.email = 'john@example.com'`   |
+
+How it internally works?
+
+Macro `span_reader :article_title, id: 'title'` creates two public methods:
+
+ * `article_title_element` which returns Watir element `:span, id: 'title'`
+ * `article_title` which returns `article_title_element.text`
+
+Macros `*_clicker` and `*_writer` follow the same convention: additional `_element` method is created next to the action method.
+
+Full list of tags supported by certain action macros can be found in [WatirPump::Constants](lib/watir_pump/constants.rb).
 
 ### Interacting with pages
 
@@ -470,8 +503,9 @@ ToDosPage.open do |page, _browser|
   page.phrase.set 'watir'
   page.search.click
 end
-SearchResultsPage.use do |page, _browser|
+SearchResultsPage.use do |page, browser|
   expect(page.results.cnt).to be > 0
+  expect(browser.title) to include 'Results'
 end
 ```
 
@@ -504,6 +538,9 @@ expect(results_page.results.cnt).to be > 0
 
 _under construction_
 
+* `browser` - reference to `Watir::Browser` instances
+* `root` (alias: `node`)
+* `parent`
 * can be nested
 * class macros for list of page elements, or sub-components
 
