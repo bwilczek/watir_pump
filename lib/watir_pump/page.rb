@@ -84,6 +84,7 @@ module WatirPump
       Watir::Wait.until(message: "Timeout waiting for #{self} to load") do
         loaded?
       end
+      self
     end
 
     def loaded?

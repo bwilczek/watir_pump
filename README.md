@@ -11,8 +11,10 @@
 * [Core concepts](#core-concepts)
     * [Configuration](#configuration)
     * [Page](#page)
+      * [uri](#uri)
       * [Element and components](#elements-and-components)
       * [Element action macros](#element-action-macros-1)
+      * [Interacting with pages](#interacting-with-pages)
     * [Component](#component)
     * [ComponentCollection](#componentcollection)
     * [Decoration](#decoration)
@@ -71,9 +73,9 @@ end
 
 #### Regions (anonymous components)
 
-If certain part appear only on one page (no point in creating another `Component` class)
-it can be declared in place, as a region (anonymous component), which will just act as
-an name space in the `Page` class.
+If certain HTML section appears only on one page (thus there's no point in creating another `Component` class)
+it can be declared in-place, as a region (anonymous component), which will just act as
+a name space in the `Page` object.
 
 ```ruby
 class HomePage < WatirPump::Page
@@ -107,7 +109,7 @@ LoginPage.open do
 end
 ```
 
-#### Support for pages with parametrized URLs
+#### Support for parametrized URLs
 
 ```ruby
 class SearchResults < WatirPump::Page
@@ -308,13 +310,14 @@ The following settings are required to start:
 
 ```ruby
 WatirPump.configure do |c|
-  # Watir::Browser instance
+  # Self explanatory: Watir::Browser instance
   c.browser = Watir::Browser.new
 
   # Self explanatory: root URL for the application under test
   c.base_url = 'http://localhost:4567'
 
   # Flag defining execution context of blocks passed to Page.use and Page.open
+  # See 'Interacting with pages'
   #   true  - block is evaluated with yield and accepts |page, browser| arguments
   #   false - block is evaluated with instance_exec on Page (default)
   c.call_page_blocks_with_yield = false
@@ -329,20 +332,62 @@ before(:each) { |example| WatirPump.config.current_example = example }
 
 ## Page
 
-Page class definition consists of a set of class marcos invocation. The one required
-to access the page is `uri`, which is the URL part that is relative to `WatirPump.config.base_url`.
+`Page` class definition consists of a list of class macros invocations.
+Most of them are inherited from [Component](#component) class. Few exceptions are:
 
-### URI
+ * `uri` - the URL part that is relative to `WatirPump.config.base_url`
+ * `loaded?` - predicate returning `true` if page is ready to be interacted with. Default implementation checks if current browser URL matches the `uri`
 
-It can be parametrized like this:
+### URI & loaded?
+
+Let's consider the following configuration for the examples below:
+
 ```ruby
-uri "/users{/username}"
+WatirPump.config.base_url = 'https://myapp.local:8080'
+```
+#### URI without parameters
+
+```ruby
+class ContactPage
+  uri "/contact"
+end
+ # =>
+ContactPage.open
+ # => https://myapp.local:8080/contact
+```
+
+#### URI with a single parameter
+
+```ruby
+class UserPage
+  uri "/users{/username}"
+end
  # =>
 UserPage.open(username: 'boromir')
+# => https://myapp.local:8080/users/boromir
+```
 
-uri "/search{?query*}"
-# =>
+#### URI with a query string
+```ruby
+class UserPage
+  uri "/search{?query*}"
+end
+ # =>
 SearchPage.open(query: { phrase: 'watir', offset: 50, limit: 100 })
+# => https://myapp.local:8080/search?phrase=watir&offset=50&limit=100
+```
+
+#### Customized `loaded?` condition
+```ruby
+class HeavyReactPage
+  uri "/spa"
+  query :loaded?, -> { root.div(class: 'ajax-fetched-content').visible? }
+end
+ # =>
+HeavyReactPage.open do
+  puts 'This line will execute once JS renders the element referenced in loaded? method'
+end
+# => https://myapp.local:8080/spa
 ```
 
 See [addressable gem](https://github.com/sporkmonger/addressable)
@@ -353,6 +398,11 @@ for more information about the URL template format.
 * watir methods
 * lambdas
 * lamdbas with parameters
+* root (vs browser)
+
+### `query` macro
+
+_under construction_
 
 ### Element action macros
 
@@ -367,6 +417,12 @@ class SearchFormPage < WatirPump::Page
   uri '/search'
   text_field :phrase, id: 'q'
   button :search, id: 'btnG'
+
+  def do_search(query)
+    phrase.set query
+    search.click
+    SearchResultsPage.new.wait_for_loaded
+  end  
 end
 
 class SearchResultsPage < WatirPump::Page
@@ -375,32 +431,39 @@ class SearchResultsPage < WatirPump::Page
 end
 ```
 
-There are three ways that page objects can be interacted with
+There are three ways that page objects can be interacted with.
+
+#### 1. DSL like style
+
+Block is evaluated in scope of the `Page` object.
+Looks nice (no need to type 'page.') but methods visible in the spec
+are not visible in the block. The only exception are the `RSpec` methods.
 
 ```ruby
-# 1. DSL like style.
-####################
-# Block is evaluated in scope of the Page object
-# Looks nice (no need to type 'page.') but methods visible in the spec
-# are not visible in the block. The only exception are the RSpec methods
-
 WatirPump.config.call_page_blocks_with_yield = false # this is default
 
 # this is required to make rspec expectations work inside the block
 before(:each) { |example| WatirPump.config.current_example = example }
 
+def helper; true end
+
 ToDosPage.open do
   phrase.set 'watir'
+  helper # this method is undefined in the page object scope and will raise an error
   search.click
 end
 SearchResultsPage.use do
   expect(results.cnt).to be > 0
 end
+```
 
-# 2. A regular yield
-####################
-# A regular block. page and object references are passed as params to yield
+There's an ongoing research about getting rid of the aforementioned limitation.
 
+#### 2. A regular yield
+
+A regular block. `page` and `browser` references are passed as parameters to the block
+
+```ruby
 WatirPump.config.call_page_blocks_with_yield = true
 
 ToDosPage.open do |page, _browser|
@@ -410,22 +473,28 @@ end
 SearchResultsPage.use do |page, _browser|
   expect(page.results.cnt).to be > 0
 end
+```
 
-# Internally Page.open/Page.use methods uses one of:
-#   Page.open_yield Page.use_yield
-#   Page.open_dsl   Page.use_dsl
-# depending on the value of config field call_page_blocks_with_yield
-# These methods can be called directly if there is a need to mix the approaches
+#### So how it works internally?
 
-# 3. No magic, the regular Page Object Pattern way
-###################
+Internally Page.open/Page.use methods uses one of:
+```ruby
+Page.open_yield Page.use_yield
+Page.open_dsl   Page.use_dsl
+```
+depending on the value of config field `call_page_blocks_with_yield`.
+These methods can be called directly if there is a need to mix the approaches.
+
+#### 3. No magic, the regular Page Object Pattern way
+
+```ruby
 page = ToDosPage.new(browser)
 page.phrase.set 'watir'
 page.search.click
 page = SearchResultsPage.new(browser)
 expect(page.results.cnt).to be > 0
 
-# alternatively, assuming that method ToDosPage#do_search will wait for the results
+# or more elegantly:
 search_page = ToDosPage.new(browser)
 results_page = search_page.do_search('watir')
 expect(results_page.results.cnt).to be > 0
