@@ -3,7 +3,14 @@
 require_relative 'lib/pages/index_page'
 require_relative 'lib/pages/calculator_page'
 
+def four4
+  4
+end
+
 RSpec.describe 'Demo Sinatra App' do
+  let(:two) { 2 }
+  let(:four) { four4 }
+
   it 'page method call' do
     IndexPage.open do
       goto_contact
@@ -12,8 +19,14 @@ RSpec.describe 'Demo Sinatra App' do
   end
 
   it 'URL params' do
-    CalculatorPage.open(query: { operand1: 2, operand2: 4 }) do
+    CalculatorPage.open(query: { operand1: two, operand2: four }) do
       expect(browser.url).to include('operand1=2&operand2=4')
+    end
+  end
+
+  it 'decorated element' do
+    CalculatorPage.open do
+      expect(btn_add.just_do_it).to eq 'just_do_it'
     end
   end
 

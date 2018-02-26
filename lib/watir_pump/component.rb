@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'component_collection'
+require_relative 'decorated_element'
 require_relative 'constants'
 require 'forwardable'
 
@@ -95,10 +96,13 @@ module WatirPump
         end
       end
 
-      def decorate(method, klass)
-        alias_method "#{method}_original".to_sym, method
-        define_method method do |*args|
-          klass.new(send("#{method}_original", *args))
+      def decorate(method, *klasses)
+        klasses.each do |klass|
+          original_name = "#{method}_before_#{klass}".to_sym
+          alias_method original_name, method
+          define_method method do |*args|
+            klass.new(send(original_name, *args))
+          end
         end
       end
     end

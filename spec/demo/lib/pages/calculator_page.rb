@@ -3,6 +3,7 @@
 require 'watir_pump'
 
 require_relative 'base_page'
+require_relative '../components/dummy_decorated_element'
 
 class CalculatorPage < BasePage
   uri '/calculator.html{?query*}'
@@ -18,6 +19,8 @@ class CalculatorPage < BasePage
   query :result2, -> { result_div.text.to_i }
   query :result, -> { browser.div(id: 'result').text.to_i }
   query :reset, -> { btn_reset.click }
+
+  decorate :btn_add, DummyDecoratedElement
 
   def add(a, b)
     operand1.set a

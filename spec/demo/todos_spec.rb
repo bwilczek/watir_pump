@@ -76,5 +76,11 @@ RSpec.describe 'ToDos page' do
         expect(home_todo_list.items.map(&:name)).not_to include('Laundry')
       end
     end
+
+    it 'supports multiple decorations' do
+      ToDosPage.open do
+        expect(todo_lists.count * 3).to eq todo_lists.count_times_three
+      end
+    end
   end
 end

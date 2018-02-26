@@ -21,8 +21,8 @@
 
 # Introduction
 
-Another approach to `PageObject` pattern for `Watir`. Heavily inspired by `SitePrism`
-and `Watirsome`.
+`PageObject` pattern for `Watir`. Heavily inspired by `SitePrism`
+and `Watirsome`. Hacker friendly and enterprise ready.
 
 ## Key features
 
@@ -478,11 +478,8 @@ WatirPump.config.call_page_blocks_with_yield = false # this is default
 # this is required to make rspec expectations work inside the block
 before(:each) { |example| WatirPump.config.current_example = example }
 
-def helper; true end
-
 ToDosPage.open do
   phrase.set 'watir'
-  helper # this method is undefined in the page object scope and will raise an error
   search.click
 end
 SearchResultsPage.use do
@@ -490,7 +487,29 @@ SearchResultsPage.use do
 end
 ```
 
-There's an ongoing research about getting rid of the aforementioned limitation.
+**IMPORTANT NOTICE:** This won't work:
+```ruby
+def helper
+  fancy_logic
+end
+
+ToDosPage.open do
+  phrase.set 'watir'
+  helper # Error: Method is undefined in this scope.
+  search.click
+end
+```
+
+Use rspec's `let` instead:
+```ruby
+let(:helper) { fancy_logic }
+
+ToDosPage.open do
+  phrase.set 'watir'
+  helper # 3. profit
+  search.click
+end
+```
 
 #### 2. A regular yield
 
@@ -556,4 +575,10 @@ _under construction_
 
 _under construction_
 
-Possible caveat: check if multiple decorations work properly.
+```ruby
+# decorator class for component collections should extend WatirPump::ComponentCollection
+decorate :todo_lists, ToDoListCollection, DummyDecoratedCollection
+
+# decorator class for elements should extend WatirPump::DecoratedElement
+decorate :btn_add, DummyDecoratedElement
+```

@@ -5,6 +5,7 @@ require 'watir_pump'
 require_relative '../components/welcome_modal'
 require_relative '../components/todo_list'
 require_relative '../components/todo_list_collection'
+require_relative '../components/dummy_decorated_collection'
 
 class ToDosPage < WatirPump::Page
   uri '/todos.html{?query*}'
@@ -23,5 +24,5 @@ class ToDosPage < WatirPump::Page
   end
 
   components :todo_lists, ToDoList, :divs, role: 'todo_list'
-  decorate :todo_lists, ToDoListCollection
+  decorate :todo_lists, ToDoListCollection, DummyDecoratedCollection
 end

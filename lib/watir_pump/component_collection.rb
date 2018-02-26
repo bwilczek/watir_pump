@@ -16,7 +16,7 @@ module WatirPump
     %i[present? visible?].each do |method_name|
       define_method method_name do
         return false if empty?
-        find { |component| component.node.send(method_name) }
+        find { |component| component.root.send(method_name) }
       end
     end
   end
