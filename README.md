@@ -576,7 +576,7 @@ _under construction_
 _under construction_
 
 ```ruby
-# decorator class for component collections should extend WatirPump::ComponentCollection
+# decorator class for component/element collections should extend WatirPump::ComponentCollection
 decorate :todo_lists, ToDoListCollection, DummyDecoratedCollection
 
 # decorator class for elements should extend WatirPump::DecoratedElement

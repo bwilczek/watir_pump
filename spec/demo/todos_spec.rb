@@ -82,5 +82,12 @@ RSpec.describe 'ToDos page' do
         expect(todo_lists.count * 3).to eq todo_lists.count_times_three
       end
     end
+
+    it 'supports decorated watir element collection' do
+      ToDosPage.open do
+        home_todo_list = todo_lists['Home']
+        expect(home_todo_list.items_raw.count * 3).to eq home_todo_list.items_raw.count_times_three
+      end
+    end
   end
 end
