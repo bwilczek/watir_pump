@@ -8,7 +8,8 @@
     * [Step 1: Just Watir elements](#step-1-just-watir-elements)
     * [Step 2: Make it a component](#step-2-make-it-a-component)
     * [Step 3: Make it more elegant and ready for Ajax](#step-3-make-it-more-elegant-and-ready-for-ajax)
-* [Core concepts](#core-concepts)
+* [Documentation](#documentation)
+    * [Installation](#installation)
     * [Configuration](#configuration)
     * [Page](#page)
       * [uri & loaded?](#uri--loaded)
@@ -21,7 +22,7 @@
 
 # Introduction
 
-`PageObject` pattern for `Watir`. Heavily inspired by `SitePrism`
+`Page Object` pattern for `Watir`. Heavily inspired by `SitePrism`
 and `Watirsome`. Hacker friendly and enterprise ready.
 
 ## Key features
@@ -62,28 +63,6 @@ end
 
 class HomePage < WatirPump::Page
   component login_box, LoginBox, -> { root.div(id: 'login_box') }
-
-  def do_login(user, pass)
-    login_box.username.set user
-    login_box.password.set pass
-    login_box.login.click
-  end
-end
-```
-
-#### Regions (anonymous components)
-
-If certain HTML section appears only on one page (thus there's no point in creating another `Component` class)
-it can be declared in-place, as a region (anonymous component), which will just act as
-a name space in the `Page` object.
-
-```ruby
-class HomePage < WatirPump::Page
-  region :login_box, :div, id: 'login_box' do
-    text_field :username, id: 'user'
-    text_field :password, id: 'pass'
-    button :login, id: 'login'
-  end
 
   def do_login(user, pass)
     login_box.username.set user
@@ -238,7 +217,7 @@ class ToDoList < WatirPump::Component
   button_clicker :btn_add, role: 'add'
   # use array of Watir elements internally
   components :item_elements, ToDoListItem, :lis
-  # expose shorter name to return just array of strings
+  # expose shorter method name to return just array of strings
   query :items, -> { item_elements.map(&:name) }
 
   def items_alternative
@@ -284,7 +263,21 @@ RSpec.describe ToDosPage do
 end
 ```
 
-# Core concepts
+# Documentation
+
+## Installation
+
+Just like with any other `gem`:
+
+Directly:
+```
+gem install watir_pump
+```
+
+or via `Gemfile` + `bundle install`
+```
+gem 'watir_pump', '~>0.1'
+```
 
 ## Configuration
 
@@ -321,6 +314,9 @@ Most of them are inherited from [Component](#component) class. Few exceptions ar
 
  * `uri` - the URL part that is relative to `WatirPump.config.base_url`
  * `loaded?` - predicate returning `true` if page is ready to be interacted with. Default implementation checks if current browser URL matches the `uri`
+
+For information about how to declare elements and component for the `Page` please go to [Component](#component) section.
+Internally `Page` itself is a `Component`, that holds other components and Watir elements (components are nestable).
 
 ### URI & loaded?
 
@@ -377,70 +373,6 @@ end
 See [addressable gem](https://github.com/sporkmonger/addressable)
 for more information about the URL template format.
 
-### Elements and components
-
-* root (vs browser)
-* watir methods `Watir::Container`
-* lambdas
-* lamdbas with parameters
-
-### `query` macro
-
-It is a shorthand to generate simple methods, usually to query DOM tree with Watir. Examples:
-
-```ruby
-class SamplePage
-  spans :items, class: 'search-result'
-
-  # regular methods
-  def items_text
-    items.map(&:text)
-  end
-
-  def items_cnt
-    items.count
-  end
-
-  def items_with_substring(phrase)
-    items_text.select { |item| item.include? phrase }
-  end
-
-  # query class macro equivalent
-  query :items_text, -> { items.map(&:text) }
-  query :items_cnt, -> { items.count }
-  query :items_with_substring ->(phrase) { items_text.select { |item| item.include? phrase } }
-end
-```
-
-As one can see `query` macro is not specific to Watir, it's just a general purpose shorthand to define methods.
-
-### Element action macros
-
-There are cases where certain page element is used only to perform one action: either click, write into, or read value.
-In such case it would be more convenient to have a page object method that would perform that action at once, instead of returning the Watir element.
-
-Element actions macros are design to do just that.
-
-| Declaration in page class                | Element action example              |
-|------------------------------------------|-------------------------------------|
-| `span :name, id: 'abc'`                  | `n = page.name.text`                |
-| `span_reader :name, id: 'abc'`           | `n = page.name`                     |
-| `link :goto_contacts, id: 'abc'`         | `page.goto_contacts.click`          |
-| `link_clicker :goto_contacts, id: 'abc'` | `page.goto_contacts`                |
-| `text_field :email, id: 'abc'`           | `page.email.set 'john@example.com'` |
-| `text_field_writer :email, id: 'abc'`    | `page.email = 'john@example.com'`   |
-
-How it internally works?
-
-Macro `span_reader :article_title, id: 'title'` creates two public methods:
-
- * `article_title_element` which returns Watir element `:span, id: 'title'`
- * `article_title` which returns `article_title_element.text`
-
-Macros `*_clicker` and `*_writer` follow the same convention: additional `_element` method is created next to the action method.
-
-Full list of tags supported by certain action macros can be found in [WatirPump::Constants](lib/watir_pump/constants.rb).
-
 ### Interacting with pages
 
 Let's consider the following pages (simplified declaration):
@@ -463,7 +395,6 @@ class SearchResultsPage < WatirPump::Page
   divs :results, class: 'result-item'
 end
 ```
-
 There are three ways that page objects can be interacted with.
 
 #### 1. DSL like style
@@ -530,7 +461,7 @@ end
 
 #### So how it works internally?
 
-Internally Page.open/Page.use methods uses one of:
+Internally `Page.open`/`Page.use` methods uses one of:
 ```ruby
 Page.open_yield Page.use_yield
 Page.open_dsl   Page.use_dsl
@@ -538,7 +469,18 @@ Page.open_dsl   Page.use_dsl
 depending on the value of config field `call_page_blocks_with_yield`.
 These methods can be called directly if there is a need to mix the approaches.
 
-#### 3. No magic, the regular Page Object Pattern way
+#### use vs open
+
+```ruby
+MyPage.open { block }
+# browser navigates to page's uri before executing the block
+
+MyPage.use { block }
+# block is executed once page is loaded. No browser.goto called internally
+# use has an alias method called act
+```
+
+#### 3. No magic, the regular Page Object pattern way
 
 ```ruby
 page = ToDosPage.new(browser)
@@ -558,14 +500,141 @@ expect(results_page.results.cnt).to be > 0
 _under construction_
 
 * `browser` - reference to `Watir::Browser` instances
-* `root` (alias: `node`)
+* `root` (alias: `node`) vs `browser`
 * `parent`
 * can be nested
 * class macros for list of page elements, or sub-components
 
-## Region aka anonymous component
+### Elements and subcomponents
 
 _under construction_
+
+* elements: watir methods from `Watir::Container`
+* component
+* components
+* root (vs browser)
+
+#### Location
+
+There are two ways of defining location of subcomponents within the current component (or page). Both are relative to current component's `root`.
+
+##### The Watir way
+
+For complete list of elements supported this way please see [Watir::Container](http://www.rubydoc.info/gems/watir-webdriver/Watir/Container).
+
+Synopsis:
+
+```
+component <name> <component_class> <watir_method_name> <watir_method_params>
+```
+
+Examples:
+
+```ruby
+# component class LoginBox, instance name login_box, located under root.div(id: 'login_box')
+component :login_box, LoginBox, :div, id: 'login_box'
+
+# component class ArticleParagraph, instance name paragraph, located under root.p
+component :paragraph, ArticleParagraph, :p
+```
+
+##### Lambdas
+
+Examples:
+
+```ruby
+# component class LoginBox, instance name login_box, located under root.div(id: 'login_box')
+component :login_box, LoginBox, -> { root.div(id: 'login_box') }
+
+# component class ArticleParagraph, instance name paragraph, located under root.p(id: <passed as an argument>)
+component :paragraph, ArticleParagraph, ->(cls) { root.p(id: cls) }
+# usage: page.paragraph('abstract')
+```
+
+### `query` macro
+
+It is a shorthand to generate simple methods, usually to query DOM tree with Watir. Examples:
+
+```ruby
+class SamplePage
+  spans :items, class: 'search-result'
+
+  # regular methods
+  def items_text
+    items.map(&:text)
+  end
+
+  def items_cnt
+    items.count
+  end
+
+  def items_with_substring(phrase)
+    items_text.select { |item| item.include? phrase }
+  end
+
+  # query class macro equivalent
+  query :items_text, -> { items.map(&:text) }
+  query :items_cnt, -> { items.count }
+  query :items_with_substring ->(phrase) { items_text.select { |item| item.include? phrase } }
+end
+```
+
+As one can see `query` macro is not specific to Watir, it's just a general purpose shorthand to define methods.
+
+### Element action macros
+
+There are cases where certain page element is used only to perform one action: either click, write into, or read value.
+In such case it would be more convenient to have a page object method that would perform that action at once, instead of returning the Watir element.
+
+Element actions macros are design to do just that.
+
+| Declaration in page class                | Element action example              |
+|------------------------------------------|-------------------------------------|
+| `span :name, id: 'abc'`                  | `n = page.name.text`                |
+| `span_reader :name, id: 'abc'`           | `n = page.name`                     |
+| `link :goto_contacts, id: 'abc'`         | `page.goto_contacts.click`          |
+| `link_clicker :goto_contacts, id: 'abc'` | `page.goto_contacts`                |
+| `text_field :email, id: 'abc'`           | `page.email.set 'john@example.com'` |
+| `text_field_writer :email, id: 'abc'`    | `page.email = 'john@example.com'`   |
+
+How it internally works?
+
+Macro `span_reader :article_title, id: 'title'` creates two public methods:
+
+ * `article_title_element` which returns Watir element `:span, id: 'title'`
+ * `article_title` which returns `article_title_element.text`
+
+Macros `*_clicker` and `*_writer` follow the same convention: additional `_element` method is created next to the action method.
+
+Full list of tags supported by certain action macros can be found in [WatirPump::Constants](lib/watir_pump/constants.rb).
+
+## Region aka anonymous component
+
+If certain HTML section appears only on one page (thus there's no point in creating another `Component` class)
+it can be declared in-place, as a region (anonymous component), which will just act as
+a name space in the `Page` object.
+
+```ruby
+class HomePage < WatirPump::Page
+  region :login_box, :div, id: 'login_box' do
+    text_field :username, id: 'user'
+    text_field :password, id: 'pass'
+    button :login, id: 'login'
+  end
+
+  def do_login(user, pass)
+    login_box.username.set user
+    login_box.password.set pass
+    login_box.login.click
+  end
+end
+```
+
+`region` class macro accepts the following parameters:
+
+ * name of region
+ * root node [locator](#location)
+ * block with group of elements/subcomponents
 
 ## ComponentCollection
 

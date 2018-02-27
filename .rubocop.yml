@@ -12,5 +12,7 @@ Metrics/LineLength:
   Enabled: true
   Exclude:
     - spec/**/*
+    - watir_pump.gemspec
 Style/CommentedKeyword:
   Enabled: false
+
