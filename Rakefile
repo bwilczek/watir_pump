@@ -24,7 +24,7 @@ task :inspections do
 end
 
 task :build do
-  sh 'rm watir_pump-*.gem'
+  sh 'rm -rf watir_pump-*.gem'
   sh 'gem build watir_pump.gemspec'
 end
 
