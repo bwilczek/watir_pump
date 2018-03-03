@@ -23,7 +23,7 @@ Heavily inspired by `SitePrism` and `Watirsome`.
       * [Declaring elements and subcomponents with class macros](#declaring-elements-and-subcomponents-with-class-macros)
         * [Elements](#elements)
         * [Subcomponents](#subcomponents)
-        * [Locating elements and components](#locating-elements-and-subcomponents)
+        * [Locating elements and subcomponents](#locating-elements-and-subcomponents)
       * [Query class macro](#query-class-macro)
       * [Element action macros](#element-action-macros-1)
     * [Region aka anonymous component](#region-aka-anonymous-component)
