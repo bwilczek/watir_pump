@@ -420,24 +420,24 @@ end
 
 **IMPORTANT NOTICE:** This won't work:
 ```ruby
-def helper
-  fancy_logic
+def query
+  'watir'
 end
 
 ToDosPage.open do
-  phrase.set 'watir'
-  helper # Error: Method is undefined in this scope.
+  phrase.set query
+  # Error: Method query is undefined in this scope.
   search.click
 end
 ```
 
 Use rspec's `let` instead:
 ```ruby
-let(:helper) { fancy_logic }
+let(:query) { 'watir' }
 
 ToDosPage.open do
-  phrase.set 'watir'
-  helper # 3. profit
+  phrase.set query
+  # now it worked
   search.click
 end
 ```
@@ -517,6 +517,9 @@ _under construction_
 #### Location
 
 There are two ways of defining location of subcomponents within the current component (or page). Both are relative to current component's `root`.
+Location used in declaration of a subcomponent (invocation of `componenet` class macro) will be the `root`  of that subcomponent.
+
+The parent component reference is accessible through `parent` method.
 
 ##### The Watir way
 
@@ -525,7 +528,7 @@ For complete list of elements supported this way please see [Watir::Container](h
 Synopsis:
 
 ```
-component <name> <component_class> <watir_method_name> <watir_method_params_optionally>
+component <name>, <component_class>, <watir_method_name>, <watir_method_params_optionally>
 ```
 
 Examples:
@@ -551,6 +554,44 @@ component :login_box, LoginBox, -> { root.div(id: 'login_box') }
 # component class ArticleParagraph, instance name paragraph, located under root.p(id: <passed as an argument>)
 component :paragraph, ArticleParagraph, ->(cls) { root.p(id: cls) }
 # example usage: page.paragraph('abstract').text
+```
+
+##### Example
+
+Let's consider the following Page structure:
+
+```ruby
+class MyPage < WatirPump::Page
+  component :login_box, LoginBox, :div, id: 'login_box'
+end
+
+class LoginBox < WatirPump::Component
+  component :reset_password, ResetPassword, -> { root.div(class: 'reset-password') }
+end
+
+class ResetPassword < WatirPump::Component
+  button :send_link, class: 'send-link'
+end
+```
+
+This is how certain elements/components are located:
+
+```ruby
+page = MyPage.new(browser)
+page.root
+ # => browser.body
+
+page.login_box.root
+ # => browser.div(id: 'login_box')
+
+page.login_box.reset_password.root
+ # => browser.div(id: 'login_box').div(class: 'reset-password')
+
+page.login_box.reset_password.parent
+ # => page.login_box
+
+page.login_box.reset_password.send_link
+ # => browser.div(id: 'login_box').div(class: 'reset-password').button(class: 'send-link')
 ```
 
 ### `query` macro
