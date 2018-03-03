@@ -11,7 +11,7 @@ module WatirPump
 
     include Constants
 
-    delegate %i[visible? present?] => :root
+    delegate Constants::METHODS_FORWARDED_TO_ROOT => :root
 
     attr_reader :browser
     attr_reader :parent

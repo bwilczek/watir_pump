@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 require 'forwardable'
+require_relative 'constants'
 
 module WatirPump
   class ComponentCollection
     extend Forwardable
+
+    include Constants
 
     delegate Enumerable.instance_methods(false) => :@arr
     delegate %i[[] empty? each] => :@arr
@@ -13,10 +16,10 @@ module WatirPump
       @arr = arr
     end
 
-    %i[present? visible?].each do |method_name|
+    Constants::METHODS_FORWARDED_TO_ROOT.each do |method_name|
       define_method method_name do
         return false if empty?
-        find { |component| component.root.send(method_name) }
+        find { |component| component.send(method_name) }
       end
     end
   end

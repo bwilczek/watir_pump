@@ -525,7 +525,7 @@ For complete list of elements supported this way please see [Watir::Container](h
 Synopsis:
 
 ```
-component <name> <component_class> <watir_method_name> <watir_method_params>
+component <name> <component_class> <watir_method_name> <watir_method_params_optionally>
 ```
 
 Examples:
@@ -533,9 +533,11 @@ Examples:
 ```ruby
 # component class LoginBox, instance name login_box, located under root.div(id: 'login_box')
 component :login_box, LoginBox, :div, id: 'login_box'
+# example usage: page.login_box.wait_until_present
 
 # component class ArticleParagraph, instance name paragraph, located under root.p
 component :paragraph, ArticleParagraph, :p
+# example usage: page.paragraph.visible?
 ```
 
 ##### Lambdas
@@ -548,7 +550,7 @@ component :login_box, LoginBox, -> { root.div(id: 'login_box') }
 
 # component class ArticleParagraph, instance name paragraph, located under root.p(id: <passed as an argument>)
 component :paragraph, ArticleParagraph, ->(cls) { root.p(id: cls) }
-# usage: page.paragraph('abstract')
+# example usage: page.paragraph('abstract').text
 ```
 
 ### `query` macro
@@ -576,6 +578,9 @@ class SamplePage
   query :items_text, -> { items.map(&:text) }
   query :items_cnt, -> { items.count }
   query :items_with_substring ->(phrase) { items_text.select { |item| item.include? phrase } }
+
+  # more examples: watir methods can be chained
+  query :nested_watir_element ->  { root.form(id: 'new_item').button(class: 'reset_count') }
 end
 ```
 
