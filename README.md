@@ -1,7 +1,7 @@
 # WatirPump
 
-`WatirPump` is an implementation of `Page Object` pattern for `Watir`. Heavily inspired by `SitePrism`
-and `Watirsome`. Hacker friendly and enterprise ready.
+`WatirPump` is a `Page Object` pattern implementation for `Watir`. Hacker friendly and enterprise ready.
+Heavily inspired by `SitePrism` and `Watirsome`.
 
 **Table of contents**
 * [Key features](#key-features)
@@ -14,10 +14,19 @@ and `Watirsome`. Hacker friendly and enterprise ready.
     * [Configuration](#configuration)
     * [Page](#page)
       * [uri & loaded?](#uri--loaded)
-      * [Element and components](#elements-and-components)
-      * [Element action macros](#element-action-macros-1)
       * [Interacting with pages](#interacting-with-pages)
+        * [1. DSL like style](#1-dsl-like-style)
+        * [2. A regular yield](#2-a-regular-yield)
+        * [3. No magic, the regular Page Object pattern way](#3-no-magic-the-regular-page-object-pattern-way)
     * [Component](#component)
+      * [Instance methods](#instance-methods)
+      * [Declaring elements and subcomponents with class macros](#declaring-elements-and-subcomponents-with-class-macros)
+        * [Elements](#elements)
+        * [Subcomponents](#subcomponents)
+        * [Locating elements and components](#locating-elements-and-subcomponents)
+      * [Query class macro](#query-class-macro)
+      * [Element action macros](#element-action-macros-1)
+    * [Region aka anonymous component](#region-aka-anonymous-component)
     * [ComponentCollection](#componentcollection)
     * [Decoration](#decoration)
 
@@ -272,7 +281,7 @@ gem install watir_pump
 
 or via `Gemfile` + `bundle install`
 ```
-gem 'watir_pump', '~>0.1'
+gem 'watir_pump', '~>0.2'
 ```
 
 ## Configuration
@@ -416,24 +425,24 @@ end
 
 **IMPORTANT NOTICE:** This won't work:
 ```ruby
-def query
+def search_term
   'watir'
 end
 
 ToDosPage.open do
-  phrase.set query
-  # Error: Method query is undefined in this scope.
+  phrase.set search_term
+  # Error: Method search_term is undefined in this scope.
   search.click
 end
 ```
 
 Use rspec's `let` instead:
 ```ruby
-let(:query) { 'watir' }
+let(:search_term) { 'watir' }
 
 ToDosPage.open do
-  phrase.set query
-  # now it worked
+  phrase.set search_term
+  # now it works
   search.click
 end
 ```
@@ -574,7 +583,7 @@ For other ways of locating elements (using lambdas and parametrized lambdas) see
 
 Other macros, like `query`, `region` and `component actions` are documented in the following paragraphs.
 
-#### Locating elements and components
+#### Locating elements and subcomponents
 
 There are two ways of defining location of subcomponents within the current component (or page). Both are relative to current component's `root`.
 Location used in declaration of a subcomponent (invocation of `componenet` class macro) will be the `root`  of that subcomponent.
@@ -749,12 +758,13 @@ end
 `region` class macro accepts the following parameters:
 
  * name of region
- * root node [locator](#location)
+ * root node [locator](#locating-elements-and-subcomponents)
  * block with group of elements/subcomponents
 
 ## ComponentCollection
 
-`ComponentCollection` is a wrapper for collection of components. For example: a list of search results.
+`ComponentCollection` is a wrapper for collection of components. For example: a list of search results. See [Subcomponents](#subcomponents) for an example.
+
 Basically it's an array, with few extra methods that return true if any of the collection items return true.
 
 The example methods are:
@@ -766,11 +776,31 @@ wait_until_present
 wait_while_present
 ```
 
-The complete list lives in `WatirPump::Constants::METHODS_FORWARDED_TO_ROOT`
+The complete list lives in `WatirPump::Constants::METHODS_FORWARDED_TO_ROOT`.
 
 ## Decoration
 
 _under construction_
+
+How it works:
+
+```ruby
+decorate :method_to_decorate, DecoratorClass, AnotherDecoratorClasses
+```
+
+New `method_to_decorate` is created this way (simplified):
+
+```ruby
+def method_to_decorate
+  AnotherDecoratorClasses.new(
+    DecoratorClass.new(
+      old_method_to_decorate
+    )
+  )
+end
+```
+
+See [this example](#step-3-make-it-more-elegant-and-ready-for-ajax): class `ToDoListCollection` and invocation of `decorate` macro.
 
 ```ruby
 # decorator class for component/element collections should extend WatirPump::ComponentCollection
