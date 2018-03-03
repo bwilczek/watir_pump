@@ -1,9 +1,10 @@
-# WORK IN PROGRESS
+# WatirPump
 
-## this README is not up-to-date
+`WatirPump` is an implementation of `Page Object` pattern for `Watir`. Heavily inspired by `SitePrism`
+and `Watirsome`. Hacker friendly and enterprise ready.
 
 **Table of contents**
-* [Introduction](#introduction)
+* [Key features](#key-features)
 * [Examples](#examples)
     * [Step 1: Just Watir elements](#step-1-just-watir-elements)
     * [Step 2: Make it a component](#step-2-make-it-a-component)
@@ -19,11 +20,6 @@
     * [Component](#component)
     * [ComponentCollection](#componentcollection)
     * [Decoration](#decoration)
-
-# Introduction
-
-`Page Object` pattern for `Watir`. Heavily inspired by `SitePrism`
-and `Watirsome`. Hacker friendly and enterprise ready.
 
 ## Key features
 
@@ -497,24 +493,88 @@ expect(results_page.results.cnt).to be > 0
 
 ## Component
 
-_under construction_
+Component is the core concept of `WatirPump` page object model definition.
+It provides a set of class macros and regular instance methods that make creation of
+such model easy.
 
-* `browser` - reference to `Watir::Browser` instances
-* `root` (alias: `node`) vs `browser`
-* `parent`
-* can be nested
-* class macros for list of page elements, or sub-components
+### Instance methods
 
-### Elements and subcomponents
+* `browser` - reference to `Watir::Browser` instance
+* `root` (alias: `node`) - reference to `Watir::Element`: component's 'mounting point' inside the DOM tree. (`browser.body` for `Pages`)
+* `parent` - reference to parent component (`nil` for `Pages`)
 
-_under construction_
+### Declaring elements and subcomponents with class macros
 
-* elements: watir methods from `Watir::Container`
-* component
-* components
-* root (vs browser)
+#### Elements
 
-#### Location
+Declaration of simple HTML/Watir elements is easy. Every instance method of [Watir::Container](http://www.rubydoc.info/gems/watir-webdriver/Watir/Container) module
+is exposed to `WatirPump::Component` as a class macro method.
+
+Examples:
+
+```ruby
+class MyPage < WatirPump::Page
+  link :index, href: /index/
+  # equivalent of:
+  def index
+    browser.link href: /index/
+    # more WatirPump like notation would be to use root instead of browser:
+    # root.link href: /index/
+  end
+  # usage: page.index.click
+
+  button :ok, value: 'OK'
+  # equivalent of:
+  def ok
+    root.button value: 'OK'
+  end
+  # usage: page.ok.click
+
+  button :action, ->(val) { root.button(value: val) }
+  # equivalent of:
+  def action(val)
+    root.button(value: val)
+  end
+  # usage: page.action('Confirm').click
+end
+```
+
+Fore more examples see [Watir guides](http://watir.com/guides/elements/).
+
+#### Subcomponents
+
+There are two class macros: `component` and `components` that are used to declare a single subcomponent, or a collection.
+
+Synopsis:
+
+```
+component :name, ComponentClass, <locator_for_single_node>
+components :name, ComponentClass, <locator_for_multiple_nodes>
+```
+
+Examples:
+
+```ruby
+class LoginBox < WatirPump::Components
+  button :login, id: 'btn_login'
+end
+
+class MyPage < WatirPump::Page
+  component :login_box, LoginBox, :div, id: 'login_box'
+  # usage: page.login_box.login.click
+
+  components :results, SearchResultItem, :divs, class: 'login_box'
+  # usage: page.results.count
+end
+```
+
+For other ways of locating elements (using lambdas and parametrized lambdas) see below.
+
+#### Others
+
+Other macros, like `query`, `region` and `component actions` are documented in the following paragraphs.
+
+#### Locating elements and components
 
 There are two ways of defining location of subcomponents within the current component (or page). Both are relative to current component's `root`.
 Location used in declaration of a subcomponent (invocation of `componenet` class macro) will be the `root`  of that subcomponent.
@@ -556,6 +616,16 @@ component :paragraph, ArticleParagraph, ->(cls) { root.p(id: cls) }
 # example usage: page.paragraph('abstract').text
 ```
 
+##### root vs browser
+
+For top level components (pages) both `root.div(class: 'asd')` and `browser.div(class: 'asd')` would work the same.
+This is because `root` of every `Page` is `browser.body`. For subcomponents however `root` points to node
+which is the mounting point of the component in the DOM tree.
+
+Using `root` as a base for locating elements is recommended as a more robust convention.
+
+Use `browser` to interact with the browser itself (cookies, navigation, javascript, title, etc.). NOT to navigate DOM.
+
 ##### Example
 
 Let's consider the following Page structure:
@@ -594,7 +664,7 @@ page.login_box.reset_password.send_link
  # => browser.div(id: 'login_box').div(class: 'reset-password').button(class: 'send-link')
 ```
 
-### `query` macro
+### `query` class macro
 
 It is a shorthand to generate simple methods, usually to query DOM tree with Watir. Examples:
 
@@ -684,7 +754,19 @@ end
 
 ## ComponentCollection
 
-_under construction_
+`ComponentCollection` is a wrapper for collection of components. For example: a list of search results.
+Basically it's an array, with few extra methods that return true if any of the collection items return true.
+
+The example methods are:
+
+```
+visible?
+present?
+wait_until_present
+wait_while_present
+```
+
+The complete list lives in `WatirPump::Constants::METHODS_FORWARDED_TO_ROOT`
 
 ## Decoration
 
