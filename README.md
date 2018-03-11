@@ -108,11 +108,11 @@ end
 
 # Examples
 
-Imagine a page that contains three ToDo lists. Or maybe just clone this repo and
-open `sinatra_app/public/todos.html` in your browser instead. This page will serve
+Imagine a page that contains three ToDo lists. Or maybe instead of imagining just clone this repo and
+open `sinatra_app/public/todos.html` in your browser. This page will serve
 as an example of how one can model and test pages using `WatirPump`.
 
-The HTML representing a single ToDo list can look like this:
+The HTML code representing a single `ToDo` list can look like this:
 
 ```html
 <div id="todos_home" role="todo_list">
