@@ -391,7 +391,7 @@ class SearchFormPage < WatirPump::Page
   def do_search(query)
     phrase.set query
     search.click
-    SearchResultsPage.new.wait_for_loaded
+    SearchResultsPage.new(browser).wait_for_loaded
   end  
 end
 
