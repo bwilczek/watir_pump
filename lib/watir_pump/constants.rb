@@ -16,7 +16,7 @@ module WatirPump
 
     WRITABLES = %i[
       text_field
-      text_area
+      textarea
     ].freeze
 
     READABLES = %i[

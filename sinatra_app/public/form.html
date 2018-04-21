@@ -1,0 +1,63 @@
+
+<!doctype html>
+<html lang="us">
+<head>
+  <meta charset="utf-8">
+  <title>Form</title>
+</head>
+<body>
+  <fieldset>
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" />
+  </fieldset>
+  <fieldset>
+    <label for="description">Description</label>
+    <textarea id="description" name="description"></textarea>
+  </fieldset>
+  <fieldset>
+    <div>Gender</div>
+    <label for="gender_male">Male</label><input id="gender_male" type="radio" name="gender" value="male" />
+    <label for="gender_female">Female</label><input id="gender_female" type="radio" name="gender" value="female" />
+  </fieldset>
+  <fieldset>
+    <div>Predicate</div>
+    <label>Yes<input type="radio" name="predicate" value="yes" /></label>
+    <label>No<input type="radio" name="predicate" value="no" /></label>
+  </fieldset>
+  <fieldset>
+    <label for="hobbies">Hobbies</label><br />
+    <input type="checkbox" name="hobbies" value="gardening">Gardening</input><br />
+    <input type="checkbox" name="hobbies" value="dancing">Dancing</input><br />
+    <input type="checkbox" name="hobbies" value="painting">Painting</input><br />
+  </fieldset>
+  <fieldset>
+    <label for="car">Car</label><br />
+    <select name="car">
+      <option value="audi">Audi</option>
+      <option value="bmw">BMW</option>
+      <option value="mercedes">Mercedes</option>
+      <option value="opel">Opel</option>
+      <option value="vw">Volkswagen</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <label for="ingredients">Ingredients</label><br />
+    <select name="ingredients" multiple="true">
+      <option value="onion">Onion</option>
+      <option value="mozarella">Mozarella</option>
+      <option value="olives">Olives</option>
+      <option value="eggplant">Eggplant</option>
+      <option value="tomato">Tomato</option>
+      <option value="asparagus">Asparagus</option>
+    </select>
+  </fieldset>
+  <button id="generate">Generate</button>
+
+  <script src="jquery-3.3.1.min.js"></script>
+  <script>
+  $(function() {
+    $('button#generate').click((e) => {alert('asd')})
+  })
+  </script>
+</body>
+</html>

@@ -53,6 +53,29 @@ module WatirPump
         end
       end
 
+      def radio_reader(name, *args)
+        define_method name do
+          selected = root.send(:radios, *args).find(&:set?)
+          if selected
+            return selected.parent.text if selected&.parent&.tag_name == 'label'
+            return root.label(for: selected.id).text
+          end
+        end
+      end
+
+      def radio_writer(name, *args) # rubocop:disable Metrics/AbcSize
+        define_method "#{name}=" do |value|
+          # <label>value<input /></label>
+          list = root.send(:radios, *args)
+          if list.first.parent.tag_name == 'label'
+            list.find { |el| el.parent.text == value }.set
+          else
+            # <label for='a'>value</label><input id='a' />
+            list.find { |el| el.id == root.label(text: value).for }.set
+          end
+        end
+      end
+
       # Methods for element clickers
       Constants::CLICKABLES.each do |watir_method|
         define_method "#{watir_method}_clicker" do |name, *args|
