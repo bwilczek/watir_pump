@@ -10,8 +10,12 @@ RSpec.describe FormPage do
       # require 'pry'; binding.pry
       self.gender = 'Female'
       self.predicate = 'No'
+      self.hobbies = %w[Gardening Dancing]
+      self.continents = %w[Europe Africa]
       expect(gender).to eq 'Female'
       expect(predicate).to eq 'No'
+      expect(hobbies).to contain_exactly('Gardening', 'Dancing')
+      expect(continents).to contain_exactly('Africa', 'Europe')
     end
     # sleep 3
   end

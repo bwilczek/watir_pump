@@ -10,7 +10,7 @@ $(function() {
 
   $('#top_menu').controlgroup();
 
-  ['index', 'calculator', 'todos'].forEach((el) => {
+  ['index', 'calculator', 'todos', 'form'].forEach((el) => {
     $(`#link_${el}`).click(() => {
       console.log(document.location.href)
       let new_href = document.location.href.replace(/[a-z]+.html$/, `${el}.html`)

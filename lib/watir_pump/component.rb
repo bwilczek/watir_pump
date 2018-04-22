@@ -76,6 +76,33 @@ module WatirPump
         end
       end
 
+      def checkbox_writer(name, *args) # rubocop:disable Metrics/AbcSize
+        define_method "#{name}=" do |values|
+          values = Array(values)
+          # <label>value<input /></label>
+          list = root.send(:checkboxes, *args)
+          values.each do |value|
+            if list.first.parent.tag_name == 'label'
+              list.find { |el| el.parent.text == value }.set
+            else
+              # <label for='a'>value</label><input id='a' />
+              list.find { |el| el.id == root.label(text: value).for }.set
+            end
+          end
+        end
+      end
+
+      def checkbox_reader(name, *args) # rubocop:disable Metrics/AbcSize
+        define_method name do
+          selected = root.send(:checkboxes, *args).select(&:set?)
+          return [] unless selected
+          if selected.first&.parent&.tag_name == 'label'
+            return selected.map { |el| el.parent.text }
+          end
+          selected.map { |el| root.label(for: el.id).text }
+        end
+      end
+
       # Methods for element clickers
       Constants::CLICKABLES.each do |watir_method|
         define_method "#{watir_method}_clicker" do |name, *args|

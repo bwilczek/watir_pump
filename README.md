@@ -733,6 +733,19 @@ Macros `*_clicker` and `*_writer` follow the same convention: additional `_eleme
 
 Full list of tags supported by certain action macros can be found in [WatirPump::Constants](lib/watir_pump/constants.rb).
 
+#### radio|checkbox|dropdown_reader|writer
+
+_development in progress_
+
+At the moment addressing by lambdas does NOT work.
+
+```ruby
+# THIS WON'T WORK
+radio_reader :gender, -> { root.radios(name: 'gender')}
+# USE THIS WAY:
+radio_reader :gender, name: 'gender'
+```
+
 ## Region aka anonymous component
 
 If certain HTML section appears only on one page (thus there's no point in creating another `Component` class)

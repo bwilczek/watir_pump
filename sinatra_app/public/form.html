@@ -6,6 +6,15 @@
   <title>Form</title>
 </head>
 <body>
+  <div id="header">
+    <div id="top_menu">
+      <a href="index.html">Home</a> |
+      <a href="calculator.html">Calculator</a> |
+      <a href="todos.html">ToDos</a> |
+      <a href="form.html">Form</a> |
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
   <fieldset>
     <label for="name">Name</label>
     <input type="text" id="name" name="name" />
@@ -25,10 +34,19 @@
     <label>No<input type="radio" name="predicate" value="no" /></label>
   </fieldset>
   <fieldset>
-    <label for="hobbies">Hobbies</label><br />
-    <input type="checkbox" name="hobbies" value="gardening">Gardening</input><br />
-    <input type="checkbox" name="hobbies" value="dancing">Dancing</input><br />
-    <input type="checkbox" name="hobbies" value="painting">Painting</input><br />
+    <div>Hobbies</div>
+    <input type="checkbox" name="hobbies[]" id="hobbies_gardening" value="gardening"/><label for="hobbies_gardening">Gardening</label><br />
+    <input type="checkbox" name="hobbies[]" id="hobbies_dancing" value="dancing" /><label for="hobbies_dancing">Dancing</label><br />
+    <input type="checkbox" name="hobbies[]" id="hobbies_knitting" value="knitting" /><label for="hobbies_knitting">Knitting</label><br />
+  </fieldset>
+  <fieldset>
+    <div>Visited continents</div>
+    <label><input type="checkbox" name="continents[]" value="europe" />Europe</label><br />
+    <label><input type="checkbox" name="continents[]" value="asia" />Asia</label><br />
+    <label><input type="checkbox" name="continents[]" value="africa" />Africa</label><br />
+    <label><input type="checkbox" name="continents[]" value="america_n" />North America</label><br />
+    <label><input type="checkbox" name="continents[]" value="america_s" />South America</label><br />
+    <label><input type="checkbox" name="continents[]" value="australia" />Australia</label><br />
   </fieldset>
   <fieldset>
     <label for="car">Car</label><br />
