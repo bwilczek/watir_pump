@@ -12,10 +12,15 @@ RSpec.describe FormPage do
       self.predicate = 'No'
       self.hobbies = %w[Gardening Dancing]
       self.continents = %w[Europe Africa]
+      self.car = 'Opel'
+      self.ingredients = %w[Mozarella Eggplant]
+      expect(name).to eq 'Kasia'
       expect(gender).to eq 'Female'
       expect(predicate).to eq 'No'
       expect(hobbies).to contain_exactly('Gardening', 'Dancing')
       expect(continents).to contain_exactly('Africa', 'Europe')
+      expect(car).to eq 'Opel'
+      expect(ingredients).to contain_exactly('Eggplant', 'Mozarella')
     end
     # sleep 3
   end

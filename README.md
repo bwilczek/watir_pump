@@ -733,7 +733,7 @@ Macros `*_clicker` and `*_writer` follow the same convention: additional `_eleme
 
 Full list of tags supported by certain action macros can be found in [WatirPump::Constants](lib/watir_pump/constants.rb).
 
-#### radio|checkbox|dropdown_reader|writer
+#### radio|checkbox|select_reader|writer
 
 _development in progress_
 

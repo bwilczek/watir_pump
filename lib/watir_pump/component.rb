@@ -6,7 +6,7 @@ require_relative 'constants'
 require 'forwardable'
 
 module WatirPump
-  class Component
+  class Component # rubocop:disable Metrics/ClassLength
     extend Forwardable
 
     include Constants
@@ -76,6 +76,11 @@ module WatirPump
         end
       end
 
+      def radio_accessor(name, *args)
+        radio_reader(name, *args)
+        radio_writer(name, *args)
+      end
+
       def checkbox_writer(name, *args) # rubocop:disable Metrics/AbcSize
         define_method "#{name}=" do |values|
           values = Array(values)
@@ -101,6 +106,31 @@ module WatirPump
           end
           selected.map { |el| root.label(for: el.id).text }
         end
+      end
+
+      def checkbox_accessor(name, *args)
+        checkbox_reader(name, *args)
+        checkbox_writer(name, *args)
+      end
+
+      def select_reader(name, *args)
+        define_method(name) do
+          select = root.send(:select, *args)
+          selected = select.selected_options
+          return select.multiple? ? selected.map(&:text) : selected.first.text
+        end
+      end
+
+      def select_writer(name, *args)
+        define_method("#{name}=") do |values|
+          select = root.send(:select, *args)
+          return select.select(*values)
+        end
+      end
+
+      def select_accessor(name, *args)
+        select_reader(name, *args)
+        select_writer(name, *args)
       end
 
       # Methods for element clickers
