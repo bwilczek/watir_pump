@@ -231,6 +231,12 @@ module WatirPump
     end
     alias node root
 
+    def fill_form(data)
+      data.to_h.each_pair do |k, v|
+        send("#{k}=", v)
+      end
+    end
+
     def method_missing(name, *args)
       # delegate missing methods to current RSpec example if set
       example = WatirPump.config.current_example
