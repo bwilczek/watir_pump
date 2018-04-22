@@ -15,6 +15,7 @@ RSpec.describe FormPage do
       self.car = 'Opel'
       self.ingredients = %w[Mozarella Eggplant]
       expect(name).to eq 'Kasia'
+      expect(description).to include 'koty'
       expect(gender).to eq 'Female'
       expect(predicate).to eq 'No'
       expect(hobbies).to contain_exactly('Gardening', 'Dancing')

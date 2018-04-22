@@ -31,11 +31,7 @@ module WatirPump
         end
       end
 
-      # Methods for element content readers
-      # span_reader, :title, id: asd
-      # will create methods :title and :title_element
-      # where :title is a shortcut for :title_element.text
-      Constants::READABLES.each do |watir_method|
+      def self.define_reader(watir_method)
         define_method "#{watir_method}_reader" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           define_method(name) do
@@ -45,14 +41,46 @@ module WatirPump
         end
       end
 
-      # Methods for element content writers
-      Constants::WRITABLES.each do |watir_method|
+      def self.define_writer(watir_method)
         define_method "#{watir_method}_writer" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           define_method("#{name}=") do |value|
             send("#{name}_element").set value
           end
         end
+      end
+
+      def self.define_accessor(watir_method)
+        define_method "#{watir_method}_accessor" do |name, *args|
+          send(watir_method, "#{name}_element", *args)
+          # reader, TODO: DRY it up
+          define_method(name) do
+            el = send("#{name}_element")
+            %w[input textarea].include?(el.tag_name) ? el.value : el.text
+          end
+          # writer, TODO: DRY it up
+          define_method("#{name}=") do |value|
+            send("#{name}_element").set value
+          end
+        end
+      end
+
+      # Methods for element content readers
+      # span_reader, :title, id: asd
+      # will create methods :title and :title_element
+      # where :title is a shortcut for :title_element.text
+      Constants::READABLES.each do |watir_method|
+        define_reader(watir_method)
+      end
+
+      # Methods for element content writers
+      Constants::WRITABLES.each do |watir_method|
+        define_writer(watir_method)
+      end
+
+      # Methods for element content accessors
+      (Constants::WRITABLES & Constants::READABLES).each do |watir_method|
+        define_accessor(watir_method)
       end
 
       def radio_reader(name, *args)
