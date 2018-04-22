@@ -84,8 +84,9 @@ module WatirPump
       end
 
       def radio_reader(name, *args)
-        define_method name do
-          selected = root.send(:radios, *args).find(&:set?)
+        define_method name do |*loc_args|
+          list = find_element(:radios, args, loc_args)
+          selected = list.find(&:set?)
           if selected
             return selected.parent.text if selected&.parent&.tag_name == 'label'
             return root.label(for: selected.id).text
@@ -234,6 +235,14 @@ module WatirPump
     def fill_form(data)
       data.to_h.each_pair do |k, v|
         send("#{k}=", v)
+      end
+    end
+
+    def find_element(watir_method, args, loc_args)
+      if args&.first.is_a? Proc
+        instance_exec(*loc_args, &args.first)
+      else
+        root.send(watir_method, *args)
       end
     end
 
