@@ -25,6 +25,7 @@ module WatirPump
       p
       link
       td
+      text_field
       h1
       h2
       h3

@@ -20,6 +20,7 @@ module WatirPump
       # Proxy methods for HTML tags
       Watir::Container.instance_methods(false).each do |watir_method|
         define_method watir_method do |name, *args|
+          return if public_methods.include? name
           define_method(name) do |*loc_args|
             if args&.first.is_a? Proc
               instance_exec(*loc_args, &args.first)
@@ -38,7 +39,8 @@ module WatirPump
         define_method "#{watir_method}_reader" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           define_method(name) do
-            send("#{name}_element").text
+            el = send("#{name}_element")
+            %w[input textarea].include?(el.tag_name) ? el.value : el.text
           end
         end
       end

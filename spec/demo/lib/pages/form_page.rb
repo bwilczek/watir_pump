@@ -6,7 +6,7 @@ class FormPage < WatirPump::Page
   uri '/form.html'
 
   text_field_writer :name, name: 'name'
-  # text_field_reader :name, name: 'name'
+  text_field_reader :name, name: 'name'
   textarea_writer :description, name: 'description'
   radio_accessor :gender, name: 'gender'
   radio_accessor :predicate, name: 'predicate'
@@ -14,8 +14,4 @@ class FormPage < WatirPump::Page
   checkbox_accessor :continents, name: 'continents[]'
   select_accessor :car, name: 'car'
   select_accessor :ingredients, name: 'ingredients'
-
-  def name
-    root.text_field(name: 'name').value
-  end
 end
