@@ -107,6 +107,7 @@ module WatirPump
         radio_reader(name, *args)
         radio_writer(name, *args)
       end
+      alias radio_group radio_accessor
 
       def checkbox_writer(name, *args) # rubocop:disable Metrics/AbcSize
         define_method "#{name}=" do |values|
@@ -139,6 +140,7 @@ module WatirPump
         checkbox_reader(name, *args)
         checkbox_writer(name, *args)
       end
+      alias checkbox_group checkbox_accessor
 
       def select_reader(name, *args)
         define_method(name) do
@@ -159,6 +161,7 @@ module WatirPump
         select_reader(name, *args)
         select_writer(name, *args)
       end
+      alias select_list select_accessor
 
       # Methods for element clickers
       Constants::CLICKABLES.each do |watir_method|

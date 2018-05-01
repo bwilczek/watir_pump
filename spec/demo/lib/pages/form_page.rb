@@ -8,9 +8,9 @@ class FormPage < WatirPump::Page
   text_field_accessor :name, name: 'name'
   textarea_accessor :description, name: 'description'
   radio_accessor :gender, name: 'gender'
-  radio_accessor :predicate, name: 'predicate'
+  radio_group :predicate, name: 'predicate'
   checkbox_accessor :hobbies, name: 'hobbies[]'
-  checkbox_accessor :continents, name: 'continents[]'
+  checkbox_group :continents, name: 'continents[]'
   select_accessor :car, name: 'car'
-  select_accessor :ingredients, name: 'ingredients[]'
+  select_list :ingredients, name: 'ingredients[]'
 end
