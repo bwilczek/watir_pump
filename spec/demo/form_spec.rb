@@ -4,6 +4,19 @@ require 'ostruct'
 require_relative 'lib/pages/form_page'
 
 RSpec.describe FormPage do
+  let(:data) do
+    OpenStruct.new.tap do |d|
+      d.name = 'Kasia'
+      d.description = 'Lubię koty oraz taniec wśród nietoperzy.'
+      d.gender = 'Female'
+      d.predicate = 'No'
+      d.hobbies = %w[Gardening Dancing]
+      d.continents = %w[Europe Africa]
+      d.car = 'Opel'
+      d.ingredients = %w[Mozarella Eggplant]
+    end
+  end
+
   it 'interacts with form elements' do
     FormPage.open do
       self.name = 'Kasia'
@@ -28,16 +41,6 @@ RSpec.describe FormPage do
 
   it 'fills in the form' do
     FormPage.open do
-      data = OpenStruct.new.tap do |d|
-        d.name = 'Kasia'
-        d.description = 'Lubię koty oraz taniec wśród nietoperzy.'
-        d.gender = 'Female'
-        d.predicate = 'No'
-        d.hobbies = %w[Gardening Dancing]
-        d.continents = %w[Europe Africa]
-        d.car = 'Opel'
-        d.ingredients = %w[Mozarella Eggplant]
-      end
       fill_form(data)
       expect(name).to eq 'Kasia'
       expect(description).to include 'koty'

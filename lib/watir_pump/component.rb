@@ -22,11 +22,7 @@ module WatirPump
         define_method watir_method do |name, *args|
           return if public_methods.include? name
           define_method(name) do |*loc_args|
-            if args&.first.is_a? Proc
-              instance_exec(*loc_args, &args.first)
-            else
-              root.send(watir_method, *args)
-            end
+            find_element(watir_method, args, loc_args)
           end
         end
       end
@@ -96,8 +92,8 @@ module WatirPump
 
       def radio_writer(name, *args) # rubocop:disable Metrics/AbcSize
         define_method "#{name}=" do |value|
+          list = find_element(:radios, args)
           # <label>value<input /></label>
-          list = root.send(:radios, *args)
           if list.first.parent.tag_name == 'label'
             list.find { |el| el.parent.text == value }.set
           else
@@ -116,7 +112,7 @@ module WatirPump
         define_method "#{name}=" do |values|
           values = Array(values)
           # <label>value<input /></label>
-          list = root.send(:checkboxes, *args)
+          list = find_element(:checkboxes, args)
           values.each do |value|
             if list.first.parent.tag_name == 'label'
               list.find { |el| el.parent.text == value }.set
@@ -130,7 +126,7 @@ module WatirPump
 
       def checkbox_reader(name, *args) # rubocop:disable Metrics/AbcSize
         define_method name do
-          selected = root.send(:checkboxes, *args).select(&:set?)
+          selected = find_element(:checkboxes, args).select(&:set?)
           return [] unless selected
           if selected.first&.parent&.tag_name == 'label'
             return selected.map { |el| el.parent.text }
@@ -146,7 +142,7 @@ module WatirPump
 
       def select_reader(name, *args)
         define_method(name) do
-          select = root.send(:select, *args)
+          select = find_element(:select, args)
           selected = select.selected_options
           return select.multiple? ? selected.map(&:text) : selected.first.text
         end
@@ -154,7 +150,7 @@ module WatirPump
 
       def select_writer(name, *args)
         define_method("#{name}=") do |values|
-          select = root.send(:select, *args)
+          select = find_element(:select, args)
           return select.select(*values)
         end
       end
@@ -238,7 +234,7 @@ module WatirPump
       end
     end
 
-    def find_element(watir_method, args, loc_args)
+    def find_element(watir_method, args, loc_args = nil)
       if args&.first.is_a? Proc
         instance_exec(*loc_args, &args.first)
       else

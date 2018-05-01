@@ -12,5 +12,5 @@ class FormPage < WatirPump::Page
   checkbox_accessor :hobbies, name: 'hobbies[]'
   checkbox_accessor :continents, name: 'continents[]'
   select_accessor :car, name: 'car'
-  select_accessor :ingredients, name: 'ingredients'
+  select_accessor :ingredients, name: 'ingredients[]'
 end
