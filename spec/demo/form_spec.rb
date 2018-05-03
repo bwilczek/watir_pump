@@ -41,14 +41,7 @@ RSpec.describe FormPage do
   it 'fills in the form' do
     FormPage.open do
       fill_form(data)
-      expect(name).to eq 'Kasia'
-      expect(description).to include 'koty'
-      expect(gender).to eq 'Female'
-      expect(predicate).to eq 'No'
-      expect(hobbies).to contain_exactly('Gardening', 'Dancing')
-      expect(continents).to contain_exactly('Africa', 'Europe')
-      expect(car).to eq 'Opel'
-      expect(ingredients).to contain_exactly('Eggplant', 'Mozarella')
+      expect(form_data).to eq data.to_h
     end
   end
 end

@@ -3,6 +3,7 @@
 require_relative 'component_collection'
 require_relative 'decorated_element'
 require_relative 'constants'
+require 'set'
 require 'forwardable'
 
 module WatirPump
@@ -31,6 +32,7 @@ module WatirPump
         define_method "#{watir_method}_reader" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           define_method(name) do
+            @form_fields << name
             el = send("#{name}_element")
             %w[input textarea].include?(el.tag_name) ? el.value : el.text
           end
@@ -41,6 +43,7 @@ module WatirPump
         define_method "#{watir_method}_writer" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           define_method("#{name}=") do |value|
+            @form_fields << name
             send("#{name}_element").set value
           end
         end
@@ -51,11 +54,13 @@ module WatirPump
           send(watir_method, "#{name}_element", *args)
           # reader, TODO: DRY it up
           define_method(name) do
+            @form_fields << name
             el = send("#{name}_element")
             %w[input textarea].include?(el.tag_name) ? el.value : el.text
           end
           # writer, TODO: DRY it up
           define_method("#{name}=") do |value|
+            @form_fields << name
             send("#{name}_element").set value
           end
         end
@@ -81,6 +86,7 @@ module WatirPump
 
       def radio_reader(name, *args)
         define_method name do |*loc_args|
+          @form_fields << name
           list = find_element(:radios, args, loc_args)
           selected = list.find(&:set?)
           if selected
@@ -92,6 +98,7 @@ module WatirPump
 
       def radio_writer(name, *args) # rubocop:disable Metrics/AbcSize
         define_method "#{name}=" do |value|
+          @form_fields << name
           list = find_element(:radios, args)
           # <label>value<input /></label>
           if list.first.parent.tag_name == 'label'
@@ -111,6 +118,7 @@ module WatirPump
 
       def checkbox_writer(name, *args) # rubocop:disable Metrics/AbcSize
         define_method "#{name}=" do |values|
+          @form_fields << name
           values = Array(values)
           # <label>value<input /></label>
           list = find_element(:checkboxes, args)
@@ -127,6 +135,7 @@ module WatirPump
 
       def checkbox_reader(name, *args) # rubocop:disable Metrics/AbcSize
         define_method name do
+          @form_fields << name
           selected = find_element(:checkboxes, args).select(&:set?)
           return [] unless selected
           if selected.first&.parent&.tag_name == 'label'
@@ -144,6 +153,7 @@ module WatirPump
 
       def select_reader(name, *args)
         define_method(name) do
+          @form_fields << name
           select = find_element(:select, args)
           selected = select.selected_options
           return select.multiple? ? selected.map(&:text) : selected.first.text
@@ -152,6 +162,7 @@ module WatirPump
 
       def select_writer(name, *args)
         define_method("#{name}=") do |values|
+          @form_fields << name
           select = find_element(:select, args)
           return select.select(*values)
         end
@@ -219,6 +230,7 @@ module WatirPump
       @browser = browser
       @parent = parent
       @root_node = root_node
+      @form_fields = Set.new
     end
 
     def root
@@ -232,6 +244,12 @@ module WatirPump
     def fill_form(data)
       data.to_h.each_pair do |k, v|
         send("#{k}=", v)
+      end
+    end
+
+    def form_data
+      {}.tap do |h|
+        @form_fields.map { |field| h[field] = send(field) }
       end
     end
 
