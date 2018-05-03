@@ -189,6 +189,8 @@ module WatirPump
           instance_exec(*args, &p)
         end
       end
+      alias element query
+      alias elements query
 
       def region(name, loc_method = nil, *loc_args, &blk)
         klass = Class.new(Component) { instance_exec(&blk) }
