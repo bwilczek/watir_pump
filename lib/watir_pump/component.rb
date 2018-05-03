@@ -186,22 +186,20 @@ module WatirPump
 
       def component(name, klass, loc_method = nil, *loc_args)
         define_method(name) do |*args|
-          node = if loc_method.is_a? Proc
-                   instance_exec(*args, &loc_method)
-                 else
-                   loc_method.nil? ? root : root.send(loc_method, *loc_args)
-                 end
+          node = find_element_raw(watir_method: loc_method,
+                                  watir_method_args: loc_args,
+                                  code: loc_method,
+                                  code_args: args)
           klass.new(browser, self, node)
         end
       end
 
       def components(name, klass, loc_method = nil, *loc_args)
         define_method(name) do |*args|
-          nodes = if loc_method.is_a? Proc
-                    instance_exec(*args, &loc_method)
-                  else
-                    root.send(loc_method, *loc_args)
-                  end
+          nodes = find_element_raw(watir_method: loc_method,
+                                   watir_method_args: loc_args,
+                                   code: loc_method,
+                                   code_args: args)
           ComponentCollection.new(nodes.map { |n| klass.new(browser, self, n) })
         end
       end
@@ -238,10 +236,17 @@ module WatirPump
     end
 
     def find_element(watir_method, args, loc_args = nil)
-      if args&.first.is_a? Proc
-        instance_exec(*loc_args, &args.first)
-      else
-        root.send(watir_method, *args)
+      find_element_raw(watir_method: watir_method,
+                       watir_method_args: args,
+                       code: args.first,
+                       code_args: loc_args)
+    end
+
+    def find_element_raw(watir_method: nil, watir_method_args: nil, code: nil, code_args: nil) # rubocop:disable Metrics/LineLength
+      if code.is_a? Proc
+        instance_exec(*code_args, &code)
+      elsif watir_method
+        root.send(watir_method, *watir_method_args)
       end
     end
 

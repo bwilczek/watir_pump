@@ -19,15 +19,14 @@ RSpec.describe FormPage do
 
   it 'interacts with form elements' do
     FormPage.open do
-      self.name = 'Kasia'
-      self.description = 'Lubię koty oraz taniec wśród nietoperzy.'
-      # require 'pry'; binding.pry
-      self.gender = 'Female'
-      self.predicate = 'No'
-      self.hobbies = %w[Gardening Dancing]
-      self.continents = %w[Europe Africa]
-      self.car = 'Opel'
-      self.ingredients = %w[Mozarella Eggplant]
+      self.name = data.name
+      self.description = data.description
+      self.gender = data.gender
+      self.predicate = data.predicate
+      self.hobbies = data.hobbies
+      self.continents = data.continents
+      self.car = data.car
+      self.ingredients = data.ingredients
       expect(name).to eq 'Kasia'
       expect(description).to include 'koty'
       expect(gender).to eq 'Female'
