@@ -12,5 +12,5 @@ class FormLambdaPage < WatirPump::Page
   checkbox_accessor :hobbies, -> { root.checkboxes(name: 'hobbies[]') }
   checkbox_group :continents, -> { root.checkboxes(name: 'continents[]') }
   select_accessor :car, -> { root.select(name: 'car') }
-  select_list :ingredients,  -> { root.select(name: 'ingredients[]') }
+  dropdown_list :ingredients, -> { root.select(name: 'ingredients[]') }
 end

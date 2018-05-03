@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
+require 'set'
+require 'forwardable'
+
 require_relative 'component_collection'
 require_relative 'decorated_element'
 require_relative 'constants'
-require 'set'
-require 'forwardable'
+require_relative 'components/radio_group'
+require_relative 'components/checkbox_group'
+require_relative 'components/dropdown_list'
 
 module WatirPump
   class Component # rubocop:disable Metrics/ClassLength
@@ -27,6 +31,10 @@ module WatirPump
           end
         end
       end
+
+      include Components::RadioGroup
+      include Components::CheckboxGroup
+      include Components::DropdownList
 
       def self.define_reader(watir_method)
         define_method "#{watir_method}_reader" do |name, *args|
@@ -83,96 +91,6 @@ module WatirPump
       (Constants::WRITABLES & Constants::READABLES).each do |watir_method|
         define_accessor(watir_method)
       end
-
-      def radio_reader(name, *args)
-        define_method name do |*loc_args|
-          @form_fields << name
-          list = find_element(:radios, args, loc_args)
-          selected = list.find(&:set?)
-          if selected
-            return selected.parent.text if selected&.parent&.tag_name == 'label'
-            return root.label(for: selected.id).text
-          end
-        end
-      end
-
-      def radio_writer(name, *args) # rubocop:disable Metrics/AbcSize
-        define_method "#{name}=" do |value|
-          @form_fields << name
-          list = find_element(:radios, args)
-          # <label>value<input /></label>
-          if list.first.parent.tag_name == 'label'
-            list.find { |el| el.parent.text == value }.set
-          else
-            # <label for='a'>value</label><input id='a' />
-            list.find { |el| el.id == root.label(text: value).for }.set
-          end
-        end
-      end
-
-      def radio_accessor(name, *args)
-        radio_reader(name, *args)
-        radio_writer(name, *args)
-      end
-      alias radio_group radio_accessor
-
-      def checkbox_writer(name, *args) # rubocop:disable Metrics/AbcSize
-        define_method "#{name}=" do |values|
-          @form_fields << name
-          values = Array(values)
-          # <label>value<input /></label>
-          list = find_element(:checkboxes, args)
-          values.each do |value|
-            if list.first.parent.tag_name == 'label'
-              list.find { |el| el.parent.text == value }.set
-            else
-              # <label for='a'>value</label><input id='a' />
-              list.find { |el| el.id == root.label(text: value).for }.set
-            end
-          end
-        end
-      end
-
-      def checkbox_reader(name, *args) # rubocop:disable Metrics/AbcSize
-        define_method name do
-          @form_fields << name
-          selected = find_element(:checkboxes, args).select(&:set?)
-          return [] unless selected
-          if selected.first&.parent&.tag_name == 'label'
-            return selected.map { |el| el.parent.text }
-          end
-          selected.map { |el| root.label(for: el.id).text }
-        end
-      end
-
-      def checkbox_accessor(name, *args)
-        checkbox_reader(name, *args)
-        checkbox_writer(name, *args)
-      end
-      alias checkbox_group checkbox_accessor
-
-      def select_reader(name, *args)
-        define_method(name) do
-          @form_fields << name
-          select = find_element(:select, args)
-          selected = select.selected_options
-          return select.multiple? ? selected.map(&:text) : selected.first.text
-        end
-      end
-
-      def select_writer(name, *args)
-        define_method("#{name}=") do |values|
-          @form_fields << name
-          select = find_element(:select, args)
-          return select.select(*values)
-        end
-      end
-
-      def select_accessor(name, *args)
-        select_reader(name, *args)
-        select_writer(name, *args)
-      end
-      alias select_list select_accessor
 
       # Methods for element clickers
       Constants::CLICKABLES.each do |watir_method|
