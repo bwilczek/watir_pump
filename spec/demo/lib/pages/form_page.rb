@@ -3,7 +3,7 @@
 require 'watir_pump'
 
 class FormPage < WatirPump::Page
-  uri '/form_acc.html'
+  uri '/form.html'
 
   text_field_accessor :name, name: 'name'
   textarea_accessor :description, name: 'description'

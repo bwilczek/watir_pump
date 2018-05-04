@@ -3,7 +3,7 @@
 require 'watir_pump'
 
 class FormReaderWriterPage < WatirPump::Page
-  uri '/form_rw.html'
+  uri '/form.html'
 
   text_field_writer :name, name: 'name'
   span_reader :name, id: 'res_name'

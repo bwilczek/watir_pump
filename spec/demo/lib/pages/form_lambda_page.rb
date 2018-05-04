@@ -3,7 +3,7 @@
 require 'watir_pump'
 
 class FormLambdaPage < WatirPump::Page
-  uri '/form_acc.html'
+  uri '/form.html'
 
   text_field_accessor :name, -> { root.text_field(name: 'name') }
   textarea_accessor :description, -> { root.textarea(name: 'description') }
