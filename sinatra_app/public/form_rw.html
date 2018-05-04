@@ -1,0 +1,108 @@
+
+<!doctype html>
+<html lang="us">
+<head>
+  <meta charset="utf-8">
+  <title>Form</title>
+</head>
+<body>
+  <div id="header">
+    <div id="top_menu">
+      <a href="index.html">Home</a> |
+      <a href="calculator.html">Calculator</a> |
+      <a href="todos.html">ToDos</a> |
+      <a href="form_acc.html">Form accessor</a> |
+      <a href="form_rw.html">Form reader/writer</a> |
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+  <fieldset>
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" />
+  </fieldset>
+  <fieldset>
+    <label for="description">Description</label>
+    <textarea id="description" name="description"></textarea>
+  </fieldset>
+  <fieldset>
+    <div>Gender</div>
+    <label for="gender_male">Male</label><input id="gender_male" type="radio" name="gender" value="male" />
+    <label for="gender_female">Female</label><input id="gender_female" type="radio" name="gender" value="female" />
+  </fieldset>
+  <fieldset>
+    <div>Predicate</div>
+    <label>Yes<input type="radio" name="predicate" value="yes" /></label>
+    <label>No<input type="radio" name="predicate" value="no" /></label>
+  </fieldset>
+  <fieldset>
+    <div>Hobbies</div>
+    <input type="checkbox" name="hobbies[]" id="hobbies_gardening" value="gardening"/><label for="hobbies_gardening">Gardening</label><br />
+    <input type="checkbox" name="hobbies[]" id="hobbies_dancing" value="dancing" /><label for="hobbies_dancing">Dancing</label><br />
+    <input type="checkbox" name="hobbies[]" id="hobbies_knitting" value="knitting" /><label for="hobbies_knitting">Knitting</label><br />
+  </fieldset>
+  <fieldset>
+    <div>Visited continents</div>
+    <label><input type="checkbox" name="continents[]" value="europe" />Europe</label><br />
+    <label><input type="checkbox" name="continents[]" value="asia" />Asia</label><br />
+    <label><input type="checkbox" name="continents[]" value="africa" />Africa</label><br />
+    <label><input type="checkbox" name="continents[]" value="america_n" />North America</label><br />
+    <label><input type="checkbox" name="continents[]" value="america_s" />South America</label><br />
+    <label><input type="checkbox" name="continents[]" value="australia" />Australia</label><br />
+  </fieldset>
+  <fieldset>
+    <label for="car">Car</label><br />
+    <select name="car">
+      <option value="audi">Audi</option>
+      <option value="bmw">BMW</option>
+      <option value="mercedes">Mercedes</option>
+      <option value="opel">Opel</option>
+      <option value="vw">Volkswagen</option>
+    </select>
+  </fieldset>
+  <fieldset>
+    <label for="ingredients[]">Ingredients</label><br />
+    <select name="ingredients[]" multiple="true">
+      <option value="onion">Onion</option>
+      <option value="mozarella">Mozarella</option>
+      <option value="olives">Olives</option>
+      <option value="eggplant">Eggplant</option>
+      <option value="tomato">Tomato</option>
+      <option value="asparagus">Asparagus</option>
+    </select>
+  </fieldset>
+  <button id="generate">Generate</button>
+  <div id="results">
+  </div>
+
+  <script src="jquery-3.3.1.min.js"></script>
+  <script>
+  $(function() {
+
+    buildResults = () => {
+      let ret = ''
+      let id, value
+      ret += 'Name: '
+      ret += `<span id="res_name">${$('input#name').val()}</span><br />`
+
+      ret += 'Description: '
+      ret += `<span id="res_description">${$('textarea#description').val()}</span><br />`
+
+      ret += 'Gender: '
+      id = $('input[name=gender]:checked').attr('id')
+      value = $(`label[for=${id}]`).html()
+      ret += `<span id="res_gender">${value}</span><br />`
+
+      ret += 'Predicate: '
+      value = $('input[name=predicate]:checked').parent().text()
+      ret += `<span id="res_predicate">${value}</span><br />`
+
+      return ret
+    }
+
+    $('button#generate').click((e) => {
+      $('div#results').html(buildResults())
+    })
+  })
+  </script>
+</body>
+</html>

@@ -758,12 +758,12 @@ How it internally works?
 
 Macro `span_reader :article_title, id: 'title'` creates two public methods:
 
- * `article_title_element` which returns Watir element `:span, id: 'title'`
- * `article_title` which returns `article_title_element.text`
+ * `article_title_reader_element` which returns Watir element `:span, id: 'title'`
+ * `article_title` which returns `article_title_reader_element.text`
 
 **WARNING:** radios, checkboxes and select lists (dropdowns) are handled slightly differently. See below.
 
-Macros `*_clicker` and `*_writer` follow the same convention: additional `_element` method is created next to the action method.
+Macros `*_clicker` and `*_writer` follow the same convention: additional `_(clicker|writer)_element` method is created next to the action method.
 
 Full list of tags supported by certain action macros can be found in [WatirPump::Constants](lib/watir_pump/constants.rb).
 

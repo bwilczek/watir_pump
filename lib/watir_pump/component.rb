@@ -46,10 +46,10 @@ module WatirPump
 
       def self.define_reader(watir_method)
         define_method "#{watir_method}_reader" do |name, *args|
-          send(watir_method, "#{name}_element", *args)
+          send(watir_method, "#{name}_reader_element", *args)
           form_field_readers << name
           define_method(name) do
-            el = send("#{name}_element")
+            el = send("#{name}_reader_element")
             %w[input textarea].include?(el.tag_name) ? el.value : el.text
           end
         end
@@ -57,27 +57,27 @@ module WatirPump
 
       def self.define_writer(watir_method)
         define_method "#{watir_method}_writer" do |name, *args|
-          send(watir_method, "#{name}_element", *args)
+          send(watir_method, "#{name}_writer_element", *args)
           form_field_writers << name
           define_method("#{name}=") do |value|
-            send("#{name}_element").set value
+            send("#{name}_writer_element").set value
           end
         end
       end
 
       def self.define_accessor(watir_method) # rubocop:disable Metrics/AbcSize
         define_method "#{watir_method}_accessor" do |name, *args|
-          send(watir_method, "#{name}_element", *args)
+          send(watir_method, "#{name}_accessor_element", *args)
           # reader, TODO: DRY it up
           form_field_readers << name
           define_method(name) do
-            el = send("#{name}_element")
+            el = send("#{name}_accessor_element")
             %w[input textarea].include?(el.tag_name) ? el.value : el.text
           end
           # writer, TODO: DRY it up
           form_field_writers << name
           define_method("#{name}=") do |value|
-            send("#{name}_element").set value
+            send("#{name}_accessor_element").set value
           end
         end
       end
@@ -103,9 +103,9 @@ module WatirPump
       # Methods for element clickers
       Constants::CLICKABLES.each do |watir_method|
         define_method "#{watir_method}_clicker" do |name, *args|
-          send(watir_method, "#{name}_element", *args)
+          send(watir_method, "#{name}_clicker_element", *args)
           define_method(name) do
-            send("#{name}_element").click
+            send("#{name}_clicker_element").click
           end
         end
       end

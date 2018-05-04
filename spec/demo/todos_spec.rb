@@ -10,7 +10,7 @@ RSpec.describe 'ToDos page' do
         open_welcome_modal
         expect(welcome_modal).to be_visible
         expect(welcome_modal.title).to eq 'Welcome modal'
-        expect(welcome_modal.title_element.text).to eq 'Welcome modal'
+        expect(welcome_modal.title_reader_element.text).to eq 'Welcome modal'
         expect(welcome_modal.content).to include 'Hello WatirPump!'
         welcome_modal.close
         expect(welcome_modal).not_to be_visible
