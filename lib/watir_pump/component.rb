@@ -32,6 +32,14 @@ module WatirPump
         end
       end
 
+      def form_field_readers
+        @form_field_readers ||= Set.new
+      end
+
+      def form_field_writers
+        @form_field_writers ||= Set.new
+      end
+
       include Components::RadioGroup
       include Components::CheckboxGroup
       include Components::DropdownList
@@ -39,8 +47,8 @@ module WatirPump
       def self.define_reader(watir_method)
         define_method "#{watir_method}_reader" do |name, *args|
           send(watir_method, "#{name}_element", *args)
+          form_field_readers << name
           define_method(name) do
-            @form_fields << name
             el = send("#{name}_element")
             %w[input textarea].include?(el.tag_name) ? el.value : el.text
           end
@@ -50,25 +58,25 @@ module WatirPump
       def self.define_writer(watir_method)
         define_method "#{watir_method}_writer" do |name, *args|
           send(watir_method, "#{name}_element", *args)
+          form_field_writers << name
           define_method("#{name}=") do |value|
-            @form_fields << name
             send("#{name}_element").set value
           end
         end
       end
 
-      def self.define_accessor(watir_method)
+      def self.define_accessor(watir_method) # rubocop:disable Metrics/AbcSize
         define_method "#{watir_method}_accessor" do |name, *args|
           send(watir_method, "#{name}_element", *args)
           # reader, TODO: DRY it up
+          form_field_readers << name
           define_method(name) do
-            @form_fields << name
             el = send("#{name}_element")
             %w[input textarea].include?(el.tag_name) ? el.value : el.text
           end
           # writer, TODO: DRY it up
+          form_field_writers << name
           define_method("#{name}=") do |value|
-            @form_fields << name
             send("#{name}_element").set value
           end
         end
@@ -150,7 +158,6 @@ module WatirPump
       @browser = browser
       @parent = parent
       @root_node = root_node
-      @form_fields = Set.new
     end
 
     def root
@@ -162,14 +169,21 @@ module WatirPump
     alias node root
 
     def fill_form(data)
+      missing = data.to_h.keys - self.class.form_field_writers.to_a
+      unless missing.empty?
+        raise "#{self.class.name} does not contain writer(s) for #{missing}"
+      end
       data.to_h.each_pair do |k, v|
         send("#{k}=", v)
       end
     end
 
     def form_data
+      # require 'pry'; binding.pry
       {}.tap do |h|
-        @form_fields.map { |field| h[field] = send(field) }
+        self.class.form_field_readers.map do |field|
+          h[field] = send(field)
+        end
       end
     end
 

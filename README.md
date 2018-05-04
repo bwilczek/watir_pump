@@ -93,6 +93,35 @@ LoginPage.open do
 end
 ```
 
+#### Helpers for forms ####
+
+```ruby
+class NewProductPage < WatirPump::Page
+  text_field_writer :name, id: 'name'
+  text_field_writer :quantity, id: 'qty'
+  button_clicker :submit, id: 'add'
+end
+
+class ShowProductPage < WatirPump::Page
+  span_reader :name, id: 'name'
+  span_reader :quantity, id: 'qty'
+end
+
+RSpec.describe 'product creation' do
+  let(:data) { { name: 'Hammer XT-431', quantity: 500 } }
+
+  it 'saves product' do
+    NewProductPage.open do
+      fill_form(data)
+      submit
+    end
+    ShowProductPage.use do
+      expect(form_data).to eq data
+    end
+  end
+end
+```
+
 #### Support for parametrized URLs
 
 ```ruby
@@ -678,7 +707,7 @@ page.login_box.reset_password.send_link
 It is a shorthand to generate simple methods, usually to query DOM tree with Watir. Examples:
 
 ```ruby
-class SamplePage
+class SamplePage < WatirPump::Page
   spans :items, class: 'search-result'
 
   # regular methods
@@ -706,6 +735,8 @@ end
 
 As one can see `query` macro is not specific to Watir, it's just a general purpose shorthand to define methods.
 
+`query` has two aliases: `element` and `elements`. One can use them to declare page objects in a way which is similar to how `watir-drops` does it.
+
 ### Element action macros
 
 There are cases where certain page element is used only to perform one action: either click, write into, or read value.
@@ -729,21 +760,82 @@ Macro `span_reader :article_title, id: 'title'` creates two public methods:
  * `article_title_element` which returns Watir element `:span, id: 'title'`
  * `article_title` which returns `article_title_element.text`
 
+**WARNING:** radios, checkboxes and select lists (dropdowns) are handled slightly differently. See below.
+
 Macros `*_clicker` and `*_writer` follow the same convention: additional `_element` method is created next to the action method.
 
 Full list of tags supported by certain action macros can be found in [WatirPump::Constants](lib/watir_pump/constants.rb).
 
-#### radio|checkbox|select_reader|writer
+Keep in mind that `writers` cannot rely on element location using parametrized lambda. `field('Employee')="John"` just won't work.
 
-_development in progress_
+In order to create both `reader` and `writer` for the same element one can use `_accessor` macro.
 
-At the moment addressing by lambdas does NOT work.
+#### radio_group|checkbox_group|dropdown_list
+
+Radios, checkboxes and selects require special handling because they don't represent a single HTML element, but several of them. For example:
+
+```html
+<fieldset>
+  <div>Predicate</div>
+  <label>Yes<input type="radio" name="predicate" value="yes" /></label>
+  <label>No<input type="radio" name="predicate" value="no" /></label>
+</fieldset>
+<!-- There are two radio buttons that describe values for one form field `predicate`. -->
+```
+
+There's a handful of macros to describe such fields in our page objects:
 
 ```ruby
-# THIS WON'T WORK
-radio_reader :gender, -> { root.radios(name: 'gender')}
-# USE THIS WAY:
-radio_reader :gender, name: 'gender'
+class UserFormPage < WatirPump::Page
+  # input(name: 'gender') matches a collection of radio elements
+  radio_reader :gender, name: 'gender'
+  radio_writer :gender, name: 'gender'
+  radio_accessor :gender, name: 'gender' # alias: radio_group, combined radio_reader and radio_writer
+  # page.gender = 'Female' will click the radio button with a corresponding label (NOT value)
+  # page.gender will return 'Female'
+
+  # input(name: 'hobbies[]') matches a collection of checkbox elements
+  checkbox_reader :hobbies, name: 'hobbies[]'
+  checkbox_writer :hobbies, name: 'hobbies[]'
+  checkbox_accessor :hobbies, name: 'hobbies[]' # alias: checkbox_group, combined checkbox_reader and checkbox_writer
+  # page.hobbies = 'Yoga' will tick the checkbox with the corresponding label (NOT value)
+  # page.hobbies = ['Yoga', 'Music'] sets multiple values
+  # page.hobbies will return an array of ticked values
+
+  # select(name: 'ingredients[]') matches a select element
+  select_reader :ingredients, name: 'ingredients[]'
+  select_writer :ingredients, name: 'ingredients[]'
+  select_accessor :ingredients, name: 'ingredients[]' # alias: dropdown_list, combined select_reader and select_writer
+  # page.ingredients = 'Salt' will select option with a respective label (NOT value)
+  # page.ingredients = ['Salt', 'Oregano'] will select multiple options with respective labels, if select is declared as multiple
+  # page.ingredients will return a selected option (single or multiple - depending on 'multiple' attribute of the select element)
+end
+```
+
+### Form helpers
+
+`fill_form(data)` - invokes `writer` method for every key of the `data` hash, with associated value as a parameter. Example:
+
+```ruby
+fill_form(name: 'Bob', surname: 'Williams', age: 34)
+# is equivalent of
+name = 'Bob'
+surname = 'Williams'
+age = 34
+```
+
+`form_data` - returns a hash of values of all elements that have a `_reader` declared. Example:
+
+```ruby
+class UserFormPage < WatirPump::Page
+  span_reader :name, id: 'name'
+  span_reader :surname, id: 'surname'
+  span_reader :age, id: 'age'
+end
+
+UserFormPage.open do
+  expect(form_data).to contain_exactly(name: 'Bob', surname: 'Williams', age: 34)
+end
 ```
 
 ## Region aka anonymous component

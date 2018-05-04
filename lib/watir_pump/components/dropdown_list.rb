@@ -4,8 +4,8 @@ module WatirPump
   module Components
     module DropdownList
       def select_reader(name, *args)
+        form_field_readers << name
         define_method(name) do
-          @form_fields << name
           select = find_element(:select, args)
           selected = select.selected_options
           return select.multiple? ? selected.map(&:text) : selected.first.text
@@ -13,8 +13,8 @@ module WatirPump
       end
 
       def select_writer(name, *args)
+        form_field_writers << name
         define_method("#{name}=") do |values|
-          @form_fields << name
           select = find_element(:select, args)
           return select.select(*values)
         end

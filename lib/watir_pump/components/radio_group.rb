@@ -4,8 +4,8 @@ module WatirPump
   module Components
     module RadioGroup
       def radio_reader(name, *args)
+        form_field_readers << name
         define_method name do |*loc_args|
-          @form_fields << name
           list = find_element(:radios, args, loc_args)
           selected = list.find(&:set?)
           if selected
@@ -16,8 +16,8 @@ module WatirPump
       end
 
       def radio_writer(name, *args) # rubocop:disable Metrics/AbcSize
+        form_field_writers << name
         define_method "#{name}=" do |value|
-          @form_fields << name
           list = find_element(:radios, args)
           # <label>value<input /></label>
           if list.first.parent.tag_name == 'label'
