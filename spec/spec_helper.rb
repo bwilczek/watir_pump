@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require 'watir_pump'
-require_relative 'helpers/sinatra_helper'
+require_relative 'helpers/watir_pump_rspec'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -10,11 +9,6 @@ RSpec.configure do |config|
 
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
-  end
-
-  config.define_derived_metadata(file_path: %r{/spec/demo/}) do |meta|
-    meta[:aggregate_failures] = true
-    meta[:watir] = true
   end
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
@@ -28,27 +22,4 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
-
-  config.before(:suite) do
-    Watir.default_timeout = 5
-    SinatraHelper.start
-    WatirPump.configure do |c|
-      c.browser = Watir::Browser.new
-      c.base_url = 'http://localhost:4567'
-      c.call_page_blocks_with_yield = false
-    end
-  end
-
-  config.before(:each) do |example|
-    WatirPump.config.current_example = example
-  end
-
-  config.after(:each, watir: true) do
-    WatirPump.config.browser.cookies.clear
-    WatirPump.config.browser.goto('about:blank')
-  end
-
-  config.after(:suite) do
-    SinatraHelper.stop
-  end
 end
