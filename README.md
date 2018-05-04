@@ -26,6 +26,7 @@ Heavily inspired by `SitePrism` and `Watirsome`.
         * [Locating elements and subcomponents](#locating-elements-and-subcomponents)
       * [Query class macro](#query-class-macro)
       * [Element action macros](#element-action-macros-1)
+      * [Form helpers](#form-helpers)
     * [Region aka anonymous component](#region-aka-anonymous-component)
     * [ComponentCollection](#componentcollection)
     * [Decoration](#decoration)
@@ -770,7 +771,7 @@ Keep in mind that `writers` cannot rely on element location using parametrized l
 
 In order to create both `reader` and `writer` for the same element one can use `_accessor` macro.
 
-#### radio_group|checkbox_group|dropdown_list
+#### radio_group, checkbox_group, dropdown_list
 
 Radios, checkboxes and selects require special handling because they don't represent a single HTML element, but several of them. For example:
 
@@ -814,7 +815,7 @@ end
 
 ### Form helpers
 
-`fill_form(data)` - invokes `writer` method for every key of the `data` hash, with associated value as a parameter. Example:
+`fill_form(data)` - invokes `writer` method for every key of the `data` hash (or struct), with associated value as a parameter. Example:
 
 ```ruby
 fill_form(name: 'Bob', surname: 'Williams', age: 34)

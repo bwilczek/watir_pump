@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'watir_pump'
-require_relative 'demo/lib/helpers/sinatra_helper'
+require_relative 'helpers/sinatra_helper'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
