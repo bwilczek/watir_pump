@@ -79,7 +79,8 @@
 
     buildResults = () => {
       let ret = ''
-      let id, value
+      let id, value, i, ids, values
+
       ret += 'Name: '
       ret += `<span id="res_name">${$('input#name').val()}</span><br />`
 
@@ -94,6 +95,27 @@
       ret += 'Predicate: '
       value = $('input[name=predicate]:checked').parent().text()
       ret += `<span id="res_predicate">${value}</span><br />`
+
+      ret += 'Hobbies: '
+      values = []
+      ids = []
+      $('input[name="hobbies[]"]:checked').each((i,el)=>{ids.push(el.getAttribute('id')) })
+      for(i in ids) { values.push($(`label[for=${ids[i]}]`).text())}
+      ret += `<span id="res_hobbies">${values.join(', ')}</span><br />`
+
+      ret += 'Continents: '
+      values = []
+      $('input[name="continents[]"]:checked').each( (_i, el) => {values.push( $(el).parent().text() )} )
+      ret += `<span id="res_continents">${values.join(', ')}</span><br />`
+
+      ret += 'Car: '
+      value = $('select[name=car] option:selected').text()
+      ret += `<span id="res_car">${value}</span><br />`
+
+      ret += 'Ingredients: '
+      values = []
+      $('select[name="ingredients[]"] option:selected').each( (i, el) => { values.push( $(el).text() ) } )
+      ret += `<span id="res_ingredients">${values.join(', ')}</span><br />`
 
       return ret
     }
