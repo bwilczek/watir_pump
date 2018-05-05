@@ -152,6 +152,15 @@ module WatirPump
           end
         end
       end
+
+      def decorate2(method, code)
+        original_name = "#{method}_before_decorate2".to_sym
+        alias_method original_name, method
+        define_method method do |*args|
+          v = send(original_name, *args)
+          instance_exec(v, &code)
+        end
+      end
     end
 
     def initialize(browser, parent = nil, root_node = nil)

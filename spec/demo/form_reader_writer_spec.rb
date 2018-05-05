@@ -12,8 +12,8 @@ RSpec.describe FormReaderWriterPage do
       d.predicate = 'No'
       # d.hobbies = %w[Gardening Dancing]
       # d.continents = %w[Europe Africa]
-      # d.car = 'Opel'
-      # d.ingredients = %w[Mozarella Eggplant]
+      d.car = 'Opel'
+      d.ingredients = %w[Mozarella Eggplant]
     end
   end
 
@@ -25,8 +25,8 @@ RSpec.describe FormReaderWriterPage do
       self.predicate = data.predicate
       # self.hobbies = data.hobbies
       # self.continents = data.continents
-      # self.car = data.car
-      # self.ingredients = data.ingredients
+      self.car = data.car
+      self.ingredients = data.ingredients
       submit
       expect(name).to eq 'Kasia'
       expect(description).to include 'koty'
@@ -34,8 +34,8 @@ RSpec.describe FormReaderWriterPage do
       expect(predicate).to eq 'No'
       # expect(hobbies).to contain_exactly('Gardening', 'Dancing')
       # expect(continents).to contain_exactly('Africa', 'Europe')
-      # expect(car).to eq 'Opel'
-      # expect(ingredients).to contain_exactly('Eggplant', 'Mozarella')
+      expect(car).to eq 'Opel'
+      expect(ingredients).to contain_exactly('Eggplant', 'Mozarella')
     end
   end
 
