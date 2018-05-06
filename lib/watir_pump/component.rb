@@ -44,12 +44,14 @@ module WatirPump
       include Components::CheckboxGroup
       include Components::DropdownList
 
-      def custom_reader(name)
+      def custom_reader(name, code = nil)
         form_field_readers << name
+        query(name, code) if code
       end
 
-      def custom_writer(name)
+      def custom_writer(name, code = nil)
         form_field_writers << name
+        query("#{name}=", code) if code
       end
 
       def self.define_reader(watir_method)
