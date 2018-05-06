@@ -44,6 +44,14 @@ module WatirPump
       include Components::CheckboxGroup
       include Components::DropdownList
 
+      def custom_reader(name)
+        form_field_readers << name
+      end
+
+      def custom_writer(name)
+        form_field_writers << name
+      end
+
       def self.define_reader(watir_method)
         define_method "#{watir_method}_reader" do |name, *args|
           send(watir_method, "#{name}_reader_element", *args)
@@ -188,7 +196,6 @@ module WatirPump
     end
 
     def form_data
-      # require 'pry'; binding.pry
       {}.tap do |h|
         self.class.form_field_readers.map do |field|
           h[field] = send(field)
