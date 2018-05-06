@@ -813,6 +813,52 @@ class UserFormPage < WatirPump::Page
 end
 ```
 
+#### Custom readers and writers
+
+Whenever reading or writing value for given form field is more sophisticated than just simple interaction with one HTML element
+`custom_reader` and `custom_writer` come handy. Let's consider that a value for certain field should be an array, and the HTML code
+that represents it looks like this:
+
+```html
+<ul id="hobbies">
+  <li><Gardening/li>
+  <li><Dancing/li>
+  <li><Golf/li>
+</ul>
+```
+
+There are two ways `custom_reader` for this field could be created:
+
+```ruby
+# 1. for one-liners passing a lambda to the class macro invocation will suffice
+custom_reader :hobbies, -> { root.ul(id: 'hobbies')&.lis&.map(&:text) || [] }
+
+# 2. for more sophisticated cases use class macro to declare that certain instance method should be treated as a reader
+custom_reader :hobbies
+
+def hobbies
+  # lots of other code if necessary
+  root.ul(id: 'hobbies')&.lis&.map(&:text) || [] }
+end
+
+# page.hobbies == ['Gardening', 'Dancing', 'Golf']
+```
+
+Same principles apply for `custom_writer`. Let's rewrite the default `text_field_writer` using `custom_writer` as an example.
+
+```ruby
+# 1. for one-liner use lambda
+custom_writer :first_name, ->(val) { root.text_field(name: 'first_name').set(val) }
+
+# 2. for more complex writer logic use a separate method. NOTE the '=' in method name!
+custom_writer :first_name
+
+def first_name=(val)
+  # do some fancy logic here if necessary
+  root.text_field(name: 'first_name').set(val)
+end
+```
+
 ### Form helpers
 
 `fill_form(data)` - invokes `writer` method for every key of the `data` hash (or struct), with associated value as a parameter. Example:
