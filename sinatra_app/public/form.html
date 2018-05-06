@@ -115,7 +115,12 @@
       ret += 'Ingredients: '
       values = []
       $('select[name="ingredients[]"] option:selected').each( (i, el) => { values.push( $(el).text() ) } )
-      ret += `<span id="res_ingredients">${values.join(', ')}</span><br />`
+      // ret += `<span id="res_ingredients">${values.join(', ')}</span><br />`
+      ret += '<ul id="res_ingredients">'
+      for(i in values) {
+        ret += `<li>${values[i]}</li>`
+      }
+      ret += '</ul>'
 
       return ret
     }

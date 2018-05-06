@@ -30,9 +30,12 @@ class FormReaderWriterPage < WatirPump::Page
 
   select_writer :ingredients, name: 'ingredients[]'
   custom_reader :ingredients
-  query :ingredients, -> { split_span('res_ingredients') }
 
   button_clicker :submit, id: 'generate'
 
   query :split_span, ->(id) { root.span(id: id).text.split(', ') }
+
+  def ingredients
+    root.ul(id: 'res_ingredients')&.lis&.map(&:text) || []
+  end
 end
