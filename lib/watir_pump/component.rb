@@ -25,7 +25,7 @@ module WatirPump
       # Proxy methods for HTML tags
       Watir::Container.instance_methods(false).each do |watir_method|
         define_method watir_method do |name, *args|
-          return if public_methods.include? name
+          return if public_instance_methods.include? name
           define_method(name) do |*loc_args|
             find_element(watir_method, args, loc_args)
           end

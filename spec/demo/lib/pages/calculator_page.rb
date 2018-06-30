@@ -7,6 +7,7 @@ require_relative '../components/dummy_decorated_element'
 
 class CalculatorPage < BasePage
   uri '/calculator.html{?query*}'
+  h1 :title
   text_field :operand1, id: 'operand1'
   # text_field :operand2, id: 'operand2'
   text_field_writer :operand2, id: 'operand2'
@@ -19,6 +20,7 @@ class CalculatorPage < BasePage
   query :result2, -> { result_div.text.to_i }
   query :result, -> { browser.div(id: 'result').text.to_i }
   query :reset, -> { btn_reset.click }
+  query :loaded?, -> { title.visible? }
 
   decorate :btn_add, DummyDecoratedElement
 
