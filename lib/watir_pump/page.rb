@@ -18,7 +18,14 @@ module WatirPump
       delegate INSTANCE_DELEGATED_METHODS => :instance
 
       def uri(uri = nil)
-        @uri = uri unless uri.nil?
+        return @uri if @uri
+        if uri.nil?
+          ancestors[1..-1].each do |a|
+            return @uri = a.uri if a.respond_to?(:uri) && a.uri
+          end
+        else
+          @uri = uri
+        end
         @uri
       end
 

@@ -187,8 +187,30 @@ module WatirPump
     end
     alias node root
 
+    def form_field_writers
+      return @form_field_writers if @form_field_writers
+      @form_field_writers = Set.new
+      self.class.ancestors.each do |a|
+        if a.respond_to? :form_field_writers
+          @form_field_writers += a.form_field_writers
+        end
+      end
+      @form_field_writers
+    end
+
+    def form_field_readers
+      return @form_field_readers if @form_field_readers
+      @form_field_readers = Set.new
+      self.class.ancestors.each do |a|
+        if a.respond_to? :form_field_readers
+          @form_field_readers += a.form_field_readers
+        end
+      end
+      @form_field_readers
+    end
+
     def fill_form(data)
-      missing = data.to_h.keys - self.class.form_field_writers.to_a
+      missing = data.to_h.keys - form_field_writers.to_a
       unless missing.empty?
         raise "#{self.class.name} does not contain writer(s) for #{missing}"
       end
@@ -205,7 +227,7 @@ module WatirPump
 
     def form_data
       {}.tap do |h|
-        self.class.form_field_readers.map do |field|
+        form_field_readers.map do |field|
           h[field] = send(field)
         end
       end
