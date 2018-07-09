@@ -46,4 +46,11 @@ RSpec.describe FormReaderWriterPage do
       expect(form_data).to eq data.to_h
     end
   end
+
+  it 'fills submits the form automatically' do
+    FormReaderWriterPage.open do
+      fill_form!(data)
+      expect(form_data).to eq data.to_h
+    end
+  end
 end

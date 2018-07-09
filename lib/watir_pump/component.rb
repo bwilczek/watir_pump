@@ -197,6 +197,12 @@ module WatirPump
       end
     end
 
+    def fill_form!(data)
+      fill_form(data)
+      raise ':fill_form! requries :submit method' unless respond_to? :submit
+      submit
+    end
+
     def form_data
       {}.tap do |h|
         self.class.form_field_readers.map do |field|

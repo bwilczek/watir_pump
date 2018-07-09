@@ -871,6 +871,8 @@ surname = 'Williams'
 age = 34
 ```
 
+`fill_form!(data)` - invokes `fill_form(data)` and additionally `submit` method if it exists (otherwise it raises an exception).
+
 `form_data` - returns a hash of values of all elements that have a `_reader` declared. Example:
 
 ```ruby
