@@ -22,6 +22,18 @@ RSpec.describe 'Locators on Page' do
         expect(cat_lambda_param('wilhelmine').attribute_value('alt')).to include('The cat is here')
       end
     end
+
+    it 'raises error when lambda returns element of different type' do
+      IndexPage.open do
+        expect { cat_image_that_is_a_table }.to raise_error(/does not match/)
+      end
+    end
+
+    it 'raises error when lambda returns element of different type (collection)' do
+      IndexPage.open do
+        expect { spans_that_are_divs }.to raise_error(/does not match/)
+      end
+    end
   end
 
   describe 'component' do

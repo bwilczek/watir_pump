@@ -6,6 +6,7 @@ require 'forwardable'
 require_relative 'component_collection'
 require_relative 'decorated_element'
 require_relative 'constants'
+require_relative 'watir_method_mapping'
 require_relative 'components/radio_group'
 require_relative 'components/checkbox_group'
 require_relative 'components/dropdown_list'
@@ -242,17 +243,26 @@ module WatirPump
 
     def find_element_raw(watir_method: nil, watir_method_args: nil, code: nil, code_args: nil) # rubocop:disable Metrics/LineLength
       if code.is_a? Proc
-        instance_exec(*code_args, &code)
+        evaluated = instance_exec(*code_args, &code)
+        check_watir_method_mapping(watir_method, evaluated)
       elsif watir_method
         root.send(watir_method, *watir_method_args)
       end
     end
 
-    def method_missing(name, *args)
+    # Raise error if watir_method (e.g. :image)
+    #  does not correspond to returned element (e.g. Watir::Table)
+    def check_watir_method_mapping(watir_method, evaluated)
+      return evaluated unless watir_method.is_a?(Symbol)
+      return evaluated if evaluated.class == WATIR_METHOD_MAPPING[watir_method]
+      raise "#{evaluated.class} class does not match expected: #{watir_method}"
+    end
+
+    def method_missing(name, *args, &blk)
       # delegate missing methods to current RSpec example if set
       example = WatirPump.config.current_example
       if example&.instance_exec { respond_to? name }
-        return example.instance_exec { send(name, *args) }
+        return example.instance_exec { send(name, *args, &blk) }
       end
       super
     end

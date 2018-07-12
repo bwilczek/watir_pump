@@ -13,8 +13,10 @@ class IndexPage < BasePage
   image :cat, id: 'wilhelmine'
   image :cat_lambda, -> { browser.image(id: 'wilhelmine') }
   image :cat_lambda_param, ->(name) { browser.image(id: name) }
+  image :cat_image_that_is_a_table, -> { root.table(id: 'products') }
 
   div :questions_box, id: 'questions'
+  spans :spans_that_are_divs, -> { questions_box.divs(data_role: 'question_wrapper') }
 
   components :questions, QuestionWidget, :divs, data_role: 'question_wrapper'
   components :questions_lambda, QuestionWidget, -> { questions_box.divs(data_role: 'question_wrapper') }
