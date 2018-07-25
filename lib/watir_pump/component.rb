@@ -182,7 +182,7 @@ module WatirPump
 
     def root
       return @root_node if @root_node
-      return browser.body if parent.nil?
+      return browser if parent.nil?
       ret = parent.root
       ret.class.name.include?('Collection') ? ret.first : ret
     end

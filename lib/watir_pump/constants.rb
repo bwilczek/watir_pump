@@ -10,6 +10,7 @@ module WatirPump
     ].freeze
 
     CLICKABLES = %i[
+      a
       button
       link
     ].freeze
@@ -20,6 +21,7 @@ module WatirPump
     ].freeze
 
     READABLES = %i[
+      a
       div
       span
       p
