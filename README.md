@@ -539,7 +539,7 @@ such model easy.
 ### Instance methods
 
 * `browser` - reference to `Watir::Browser` instance
-* `root` (alias: `node`) - reference to `Watir::Element`: component's 'mounting point' inside the DOM tree. (`browser.body` for `Pages`)
+* `root` (alias: `node`) - reference to `Watir::Element`: component's 'mounting point' inside the DOM tree. (WARNING: for `Pages` it refers to `browser`)
 * `parent` - reference to parent component (`nil` for `Pages`)
 
 ### Declaring elements and subcomponents with class macros
@@ -658,7 +658,7 @@ component :paragraph, ArticleParagraph, ->(cls) { root.p(id: cls) }
 ##### root vs browser
 
 For top level components (pages) both `root.div(class: 'asd')` and `browser.div(class: 'asd')` would work the same.
-This is because `root` of every `Page` is `browser.body`. For subcomponents however `root` points to node
+This is because `root` of every `Page` is `browser`. For subcomponents however `root` points to node
 which is the mounting point of the component in the DOM tree.
 
 Using `root` as a base for locating elements is recommended as a more robust convention.
