@@ -6,14 +6,14 @@ RSpec.describe 'ToDos page' do
   describe 'Welcome modal' do
     it 'opens and closes' do
       ToDosPage.open do
-        expect(welcome_modal).not_to be_visible
+        expect(welcome_modal).not_to be_present
         open_welcome_modal
-        expect(welcome_modal).to be_visible
+        expect(welcome_modal).to be_present
         expect(welcome_modal.title).to eq 'Welcome modal'
         expect(welcome_modal.title_reader_element.text).to eq 'Welcome modal'
         expect(welcome_modal.content).to include 'Hello WatirPump!'
         welcome_modal.close
-        expect(welcome_modal).not_to be_visible
+        expect(welcome_modal).not_to be_present
       end
     end
   end
@@ -21,10 +21,10 @@ RSpec.describe 'ToDos page' do
   describe 'dsl' do
     it 'works without passing page to block' do
       ToDosPage.open do
-        expect(welcome_modal).not_to be_visible
+        expect(welcome_modal).not_to be_present
         top_menu.welcome
         expect(browser.title).to include('ToDo')
-        expect(welcome_modal).to be_visible
+        expect(welcome_modal).to be_present
       end
     end
   end
@@ -32,17 +32,17 @@ RSpec.describe 'ToDos page' do
   describe 'region' do
     it 'works not nested for watir locator' do
       ToDosPage.open do
-        expect(welcome_modal).not_to be_visible
+        expect(welcome_modal).not_to be_present
         top_menu.welcome
-        expect(welcome_modal).to be_visible
+        expect(welcome_modal).to be_present
       end
     end
 
     it 'works not nested for lambda locator' do
       ToDosPage.open do
-        expect(welcome_modal).not_to be_visible
+        expect(welcome_modal).not_to be_present
         top_menu2.welcome
-        expect(welcome_modal).to be_visible
+        expect(welcome_modal).to be_present
       end
     end
   end

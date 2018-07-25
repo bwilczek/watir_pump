@@ -20,7 +20,7 @@ class CalculatorPage < BasePage
   query :result2, -> { result_div.text.to_i }
   query :result, -> { browser.div(id: 'result').text.to_i }
   query :reset, -> { btn_reset.click }
-  query :loaded?, -> { title.visible? }
+  query :loaded?, -> { title.present? }
 
   decorate :btn_add, DummyDecoratedElement
 

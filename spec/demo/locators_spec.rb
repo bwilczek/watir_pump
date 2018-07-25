@@ -36,6 +36,32 @@ RSpec.describe 'Locators on Page' do
     end
   end
 
+  describe 'element(s)' do
+    it 'found by element' do
+      IndexPage.open do
+        expect(cat_element.attribute_value('alt')).to include('The cat is here')
+      end
+    end
+
+    it 'raises error when element method does not return Watir::Element' do
+      IndexPage.open do
+        expect { cat_element_error }.to raise_error(/element method did not return a Watir::Element/)
+      end
+    end
+
+    it 'found by elements' do
+      IndexPage.open do
+        expect(question_wrapper_elements).to respond_to(:count)
+      end
+    end
+
+    it 'raises error when elements method does not return Watir::ElementCollection' do
+      IndexPage.open do
+        expect { question_wrapper_elements_error }.to raise_error(/elements method did not return a Watir::ElementCollection/)
+      end
+    end
+  end
+
   describe 'component' do
     it 'found for static watir locator' do
       IndexPage.open do

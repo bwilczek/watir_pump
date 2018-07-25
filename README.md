@@ -736,7 +736,10 @@ end
 
 As one can see `query` macro is not specific to Watir, it's just a general purpose shorthand to define methods.
 
-`query` has two aliases: `element` and `elements`. One can use them to declare page objects in a way which is similar to how `watir-drops` does it.
+`query` has two decorated variants:
+ * `element` - raises error if value returned from `query` is not a `Watir::Element`
+ * `elements` - raises error if value returned from `query` is not a `Watir::ElementCollection`
+ One can use them to declare page objects in `watir-drops` style.
 
 ### Element action macros
 

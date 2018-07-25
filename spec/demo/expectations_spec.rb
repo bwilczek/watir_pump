@@ -14,7 +14,6 @@ RSpec.describe 'Expectations' do
   it 'expects collection to be visible and present' do
     IndexPage.open do
       expect(questions).to be_present
-      expect(questions).to be_visible
     end
   end
 

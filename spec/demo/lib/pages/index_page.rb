@@ -15,6 +15,12 @@ class IndexPage < BasePage
   image :cat_lambda_param, ->(name) { browser.image(id: name) }
   image :cat_image_that_is_a_table, -> { root.table(id: 'products') }
 
+  element :cat_element, -> { root.image(id: 'wilhelmine') }
+  element :cat_element_error, -> { root.image(id: 'wilhelmine').attribute_value('alt') }
+
+  elements :question_wrapper_elements, -> { questions_box.divs(data_role: 'question_wrapper') }
+  elements :question_wrapper_elements_error, -> { root.image(id: 'wilhelmine') }
+
   div :questions_box, id: 'questions'
   spans :spans_that_are_divs, -> { questions_box.divs(data_role: 'question_wrapper') }
 

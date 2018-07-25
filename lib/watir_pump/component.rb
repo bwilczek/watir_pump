@@ -126,8 +126,26 @@ module WatirPump
           instance_exec(*args, &p)
         end
       end
-      alias element query
-      alias elements query
+
+      def element(name, p)
+        define_method(name) do |*args|
+          ret = instance_exec(*args, &p)
+          unless ret.is_a?(Watir::Element)
+            raise 'element method did not return a Watir::Element'
+          end
+          ret
+        end
+      end
+
+      def elements(name, p)
+        define_method(name) do |*args|
+          ret = instance_exec(*args, &p)
+          unless ret.is_a?(Watir::ElementCollection)
+            raise 'elements method did not return a Watir::ElementCollection'
+          end
+          ret
+        end
+      end
 
       def region(name, loc_method = nil, *loc_args, &blk)
         klass = Class.new(Component) { instance_exec(&blk) }

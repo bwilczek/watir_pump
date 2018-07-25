@@ -10,6 +10,6 @@ RSpec.describe 'Page constructor' do
     page.top_menu.calculator.click
     expect(browser.url).to include('calculator.html')
     page = CalculatorPage.new(browser)
-    expect(page.operand1).to be_visible
+    expect(page.operand1).to be_present
   end
 end
