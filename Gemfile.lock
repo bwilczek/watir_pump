@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    watir_pump (0.3.7)
+    watir_pump (0.3.8)
       activesupport (~> 4.0)
       addressable (~> 2.5)
       watir (~> 6.10)

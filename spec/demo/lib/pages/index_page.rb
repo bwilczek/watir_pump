@@ -25,10 +25,12 @@ class IndexPage < BasePage
   spans :spans_that_are_divs, -> { questions_box.divs(data_role: 'question_wrapper') }
 
   components :questions, QuestionWidget, :divs, data_role: 'question_wrapper'
+  components :questions_with_invalid_location, QuestionWidget, -> { root.image(id: 'wilhelmine').attribute_value('alt') }
   components :questions_lambda, QuestionWidget, -> { questions_box.divs(data_role: 'question_wrapper') }
   components :questions_lambda_param, QuestionWidget, ->(role) { questions_box.divs(data_role: role) }
 
   component :products, ProductTable, :table, id: 'products'
+  component :products_with_invalid_location, ProductTable, -> { root.image(id: 'wilhelmine').attribute_value('alt') }
 
   button :yes0, -> { yes_n(0) }
   button :yes_n, ->(n) { questions[n].buttons.yes }

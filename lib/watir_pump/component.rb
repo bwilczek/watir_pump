@@ -3,6 +3,7 @@
 require 'set'
 require 'forwardable'
 
+require_relative 'errors/element_mismatch'
 require_relative 'component_collection'
 require_relative 'decorated_element'
 require_relative 'constants'
@@ -131,7 +132,10 @@ module WatirPump
         define_method(name) do |*args|
           ret = instance_exec(*args, &p)
           unless ret.is_a?(Watir::Element)
-            raise 'element method did not return a Watir::Element'
+            raise Errors::ElementMismatch.new(
+              expected: Watir::Element,
+              actual: ret.class
+            )
           end
           ret
         end
@@ -141,7 +145,10 @@ module WatirPump
         define_method(name) do |*args|
           ret = instance_exec(*args, &p)
           unless ret.is_a?(Watir::ElementCollection)
-            raise 'elements method did not return a Watir::ElementCollection'
+            raise Errors::ElementMismatch.new(
+              expected: Watir::ElementCollection,
+              actual: ret.class
+            )
           end
           ret
         end
@@ -158,6 +165,12 @@ module WatirPump
                                   watir_method_args: loc_args,
                                   code: loc_method,
                                   code_args: args)
+          unless node.is_a?(Watir::Element) || node.nil?
+            raise Errors::ElementMismatch.new(
+              expected: Watir::Element,
+              actual: node.class
+            )
+          end
           klass.new(browser, self, node)
         end
       end
@@ -168,6 +181,12 @@ module WatirPump
                                    watir_method_args: loc_args,
                                    code: loc_method,
                                    code_args: args)
+          unless nodes.is_a?(Watir::ElementCollection)
+            raise Errors::ElementMismatch.new(
+              expected: Watir::ElementCollection,
+              actual: nodes.class
+            )
+          end
           ComponentCollection.new(nodes.map { |n| klass.new(browser, self, n) })
         end
       end
@@ -273,7 +292,10 @@ module WatirPump
     def check_watir_method_mapping(watir_method, evaluated)
       return evaluated unless watir_method.is_a?(Symbol)
       return evaluated if evaluated.class == WATIR_METHOD_MAPPING[watir_method]
-      raise "#{evaluated.class} class does not match expected: #{watir_method}"
+      raise Errors::ElementMismatch.new(
+        expected: WATIR_METHOD_MAPPING[watir_method],
+        actual: evaluated.class
+      )
     end
 
     def method_missing(name, *args, &blk)

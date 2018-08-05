@@ -25,13 +25,13 @@ RSpec.describe 'Locators on Page' do
 
     it 'raises error when lambda returns element of different type' do
       IndexPage.open do
-        expect { cat_image_that_is_a_table }.to raise_error(/does not match/)
+        expect { cat_image_that_is_a_table }.to raise_error(WatirPump::Errors::ElementMismatch)
       end
     end
 
     it 'raises error when lambda returns element of different type (collection)' do
       IndexPage.open do
-        expect { spans_that_are_divs }.to raise_error(/does not match/)
+        expect { spans_that_are_divs }.to raise_error(WatirPump::Errors::ElementMismatch)
       end
     end
   end
@@ -45,7 +45,7 @@ RSpec.describe 'Locators on Page' do
 
     it 'raises error when element method does not return Watir::Element' do
       IndexPage.open do
-        expect { cat_element_error }.to raise_error(/element method did not return a Watir::Element/)
+        expect { cat_element_error }.to raise_error(WatirPump::Errors::ElementMismatch)
       end
     end
 
@@ -57,7 +57,7 @@ RSpec.describe 'Locators on Page' do
 
     it 'raises error when elements method does not return Watir::ElementCollection' do
       IndexPage.open do
-        expect { question_wrapper_elements_error }.to raise_error(/elements method did not return a Watir::ElementCollection/)
+        expect { question_wrapper_elements_error }.to raise_error(WatirPump::Errors::ElementMismatch)
       end
     end
   end
@@ -81,6 +81,12 @@ RSpec.describe 'Locators on Page' do
       IndexPage.open do
         top_menu_lambda_param('top_menu').calculator.click
         expect(browser.url).to include('calculator.html')
+      end
+    end
+
+    it 'raises errors for invalid location' do
+      IndexPage.open do
+        expect { products_with_invalid_location }.to raise_error(WatirPump::Errors::ElementMismatch)
       end
     end
   end
@@ -110,6 +116,12 @@ RSpec.describe 'Locators on Page' do
         expect(questions_lambda_param('question_wrapper')[0].buttons.result.text).to eq 'Yay!'
         yes_n(2).click
         expect(questions_lambda_param('question_wrapper')[2].buttons.result.text).to eq 'Yay!'
+      end
+    end
+
+    it 'raises errors for invalid location' do
+      IndexPage.open do
+        expect { questions_with_invalid_location }.to raise_error(WatirPump::Errors::ElementMismatch)
       end
     end
   end
