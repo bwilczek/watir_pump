@@ -3,6 +3,8 @@
 `WatirPump` is a `Page Object` pattern implementation for `Watir`. Hacker friendly and enterprise ready.
 Heavily inspired by `SitePrism` and `Watirsome`.
 
+### To learn WatirPump by example please refer to [THIS TUTORIAL](https://github.com/bwilczek/watir_pump_tutorial)
+
 **Table of contents**
 * [Key features](#key-features)
 * [Examples](#examples)
@@ -30,6 +32,8 @@ Heavily inspired by `SitePrism` and `Watirsome`.
     * [Region aka anonymous component](#region-aka-anonymous-component)
     * [ComponentCollection](#componentcollection)
     * [Decoration](#decoration)
+
+### To learn WatirPump by example please refer to [THIS TUTORIAL](https://github.com/bwilczek/watir_pump_tutorial)
 
 ## Key features
 
