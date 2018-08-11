@@ -9,6 +9,7 @@ class FormPage < WatirPump::Page
   textarea_accessor :description, name: 'description'
   radio_accessor :gender, name: 'gender'
   radio_group :predicate, name: 'predicate'
+  flag :confirmed, name: 'confirmation'
   checkbox_accessor :hobbies, name: 'hobbies[]'
   checkbox_group :continents, name: 'continents[]'
   select_accessor :car, name: 'car'

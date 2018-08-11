@@ -18,6 +18,9 @@ class FormReaderWriterPage < WatirPump::Page
   radio_group :predicate, name: 'predicate'
   span_reader :predicate, id: 'res_predicate'
 
+  flag_writer :confirmed, name: 'confirmation'
+  custom_reader :confirmed, -> { root.span(id: 'res_confirmation').text == 'YES' }
+
   checkbox_writer :hobbies, name: 'hobbies[]'
   custom_reader :hobbies
   query :hobbies, -> { split_span('res_hobbies') }

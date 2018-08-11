@@ -778,7 +778,7 @@ Keep in mind that `writers` cannot rely on element location using parametrized l
 
 In order to create both `reader` and `writer` for the same element one can use `_accessor` macro.
 
-#### radio_group, checkbox_group, dropdown_list
+#### radio_group, checkbox_group, flag, dropdown_list
 
 Radios, checkboxes and selects require special handling because they don't represent a single HTML element, but several of them. For example:
 
@@ -809,6 +809,14 @@ class UserFormPage < WatirPump::Page
   # page.hobbies = 'Yoga' will tick the checkbox with the corresponding label (NOT value)
   # page.hobbies = ['Yoga', 'Music'] sets multiple values
   # page.hobbies will return an array of ticked values
+
+  # input(name: 'confirmed') matches a single checkbox element
+  flag_writer :confirmed, name: 'confirmed'
+  flag_reader :confirmed, name: 'confirmed'
+  flag_accessor :confirmed, name: 'confirmed' # alias: flag, combined flag_writer and flag_reader
+  # page.confirmed = true will tick the checkbox
+  # page.confirmed will return a boolean with the `checked` status of the element
+  # page.confirmed? - same as above
 
   # select(name: 'ingredients[]') matches a select element
   select_reader :ingredients, name: 'ingredients[]'

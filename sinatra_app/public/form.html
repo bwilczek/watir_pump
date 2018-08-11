@@ -34,6 +34,10 @@
     <label>No<input type="radio" name="predicate" value="no" /></label>
   </fieldset>
   <fieldset>
+    <div>Confirmation</div>
+    <input type="checkbox" name="confirmation" id="confirmation" value="true"/><label for="confirmation">I do confirm that I realize the consequences</label><br />
+  </fieldset>
+  <fieldset>
     <div>Hobbies</div>
     <input type="checkbox" name="hobbies[]" id="hobbies_gardening" value="gardening"/><label for="hobbies_gardening">Gardening</label><br />
     <input type="checkbox" name="hobbies[]" id="hobbies_dancing" value="dancing" /><label for="hobbies_dancing">Dancing</label><br />
@@ -95,6 +99,10 @@
       ret += 'Predicate: '
       value = $('input[name=predicate]:checked').parent().text()
       ret += `<span id="res_predicate">${value}</span><br />`
+
+      ret += 'Confirmed: '
+      value = $('input[id=confirmation]').prop('checked') ? 'YES' : 'NO'
+      ret += `<span id="res_confirmation">${value}</span><br />`
 
       ret += 'Hobbies: '
       values = []

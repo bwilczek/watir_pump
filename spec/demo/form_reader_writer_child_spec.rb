@@ -10,6 +10,7 @@ RSpec.describe FormReaderWriterChildPage do
       d.description = 'Lubię koty oraz taniec wśród nietoperzy.'
       d.gender = 'Female'
       d.predicate = 'No'
+      d.confirmed = true
       d.hobbies = %w[Gardening Dancing]
       d.continents = %w[Europe Africa]
       d.car = 'Opel'

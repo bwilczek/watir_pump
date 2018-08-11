@@ -11,6 +11,7 @@ require_relative 'watir_method_mapping'
 require_relative 'components/radio_group'
 require_relative 'components/checkbox_group'
 require_relative 'components/dropdown_list'
+require_relative 'components/flag'
 
 module WatirPump
   class Component # rubocop:disable Metrics/ClassLength
@@ -45,6 +46,7 @@ module WatirPump
       include Components::RadioGroup
       include Components::CheckboxGroup
       include Components::DropdownList
+      include Components::Flag
 
       def custom_reader(name, code = nil)
         form_field_readers << name

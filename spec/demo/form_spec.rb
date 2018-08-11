@@ -10,6 +10,7 @@ RSpec.describe FormPage do
       d.description = 'Lubię koty oraz taniec wśród nietoperzy.'
       d.gender = 'Female'
       d.predicate = 'No'
+      d.confirmed = true
       d.hobbies = %w[Gardening Dancing]
       d.continents = %w[Europe Africa]
       d.car = 'Opel'
@@ -23,6 +24,7 @@ RSpec.describe FormPage do
       self.description = data.description
       self.gender = data.gender
       self.predicate = data.predicate
+      self.confirmed = data.confirmed
       self.hobbies = data.hobbies
       self.continents = data.continents
       self.car = data.car
@@ -31,6 +33,7 @@ RSpec.describe FormPage do
       expect(description).to include 'koty'
       expect(gender).to eq 'Female'
       expect(predicate).to eq 'No'
+      expect(self).to be_confirmed
       expect(hobbies).to contain_exactly('Gardening', 'Dancing')
       expect(continents).to contain_exactly('Africa', 'Europe')
       expect(car).to eq 'Opel'
