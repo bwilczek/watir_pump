@@ -4,7 +4,7 @@ PATH
     watir_pump (0.3.9)
       activesupport (~> 4.0)
       addressable (~> 2.5)
-      watir (~> 6.10)
+      watir (~> 6.9)
 
 GEM
   remote: https://rubygems.org/
@@ -63,7 +63,7 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.9.0)
     rubyzip (1.2.1)
-    selenium-webdriver (3.14.0)
+    selenium-webdriver (3.13.1)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
     sinatra (2.0.3)
