@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
+# rubocop:disable Style/MutableConstant
 
 module WatirPump
   WATIR_METHOD_MAPPING = {
@@ -302,10 +303,6 @@ module WatirPump
     # others
     radio: Watir::Radio,
     radios: Watir::RadioCollection,
-    date_time_field: Watir::DateTimeField,
-    date_time_fields: Watir::DateTimeFieldCollection,
-    date_field: Watir::DateField,
-    date_fields: Watir::DateFieldCollection,
     frame: Watir::Frame,
     frames: Watir::FrameCollection,
     file_field: Watir::FileField,
@@ -318,7 +315,18 @@ module WatirPump
     fonts: Watir::FontCollection,
     text_field: Watir::TextField,
     text_fields: Watir::TextFieldCollection
-  }.freeze
+  }
+  if defined? Watir::DateTimeField
+    watir_6_10_elems = {
+      date_time_field: Watir::DateTimeField,
+      date_time_fields: Watir::DateTimeFieldCollection,
+      date_field: Watir::DateField,
+      date_fields: Watir::DateFieldCollection
+    }
+    WATIR_METHOD_MAPPING.merge! watir_6_10_elems
+  end
+  WATIR_METHOD_MAPPING.freeze
 end
 
+# rubocop:enable Style/MutableConstant
 # rubocop:enable Metrics/ModuleLength
