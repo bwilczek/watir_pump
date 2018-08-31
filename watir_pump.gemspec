@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage     = 'https://github.com/bwilczek/watir_pump'
   s.license      = 'MIT'
   s.required_ruby_version = '~> 2.4'
-  s.add_dependency 'activesupport', '~> 4.0'
+  s.add_dependency 'activesupport', '>= 4.0.0'
   s.add_dependency 'addressable', '~> 2.5'
   s.add_dependency 'watir', '~> 6.9'
   s.add_development_dependency 'pry', '~> 0.11'
