@@ -881,9 +881,9 @@ end
 ```ruby
 fill_form(name: 'Bob', surname: 'Williams', age: 34)
 # is equivalent of
-name = 'Bob'
-surname = 'Williams'
-age = 34
+self.name = 'Bob'
+self.surname = 'Williams'
+self.age = 34
 ```
 
 `fill_form!(data)` - invokes `fill_form(data)` and additionally `submit` method if it exists (otherwise it raises an exception).
