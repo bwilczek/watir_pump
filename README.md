@@ -836,9 +836,9 @@ that represents it looks like this:
 
 ```html
 <ul id="hobbies">
-  <li><Gardening/li>
-  <li><Dancing/li>
-  <li><Golf/li>
+  <li>Gardening</li>
+  <li>Dancing</li>
+  <li>Golf</li>
 </ul>
 ```
 
@@ -901,6 +901,21 @@ UserFormPage.open do
   expect(form_data).to contain_exactly(name: 'Bob', surname: 'Williams', age: 34)
 end
 ```
+
+### Forwarding to root
+
+There's a few methods that components forward directly to its root:
+
+* visible?
+* present?
+* stale?
+* wait_until_present
+* wait_while_present
+* wait_until
+* wait_while
+* flash
+
+Thanks to this one can write just `comp.present?` instead of `comp.root.present?`.
 
 ## Region aka anonymous component
 

@@ -5,8 +5,12 @@ module WatirPump
     METHODS_FORWARDED_TO_ROOT = %i[
       visible?
       present?
+      stale?
       wait_until_present
       wait_while_present
+      wait_until
+      wait_while
+      flash
     ].freeze
 
     CLICKABLES = %i[
