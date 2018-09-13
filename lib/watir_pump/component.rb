@@ -22,8 +22,9 @@ module WatirPump
   #
   # See {WatirPump::WATIR_METHOD_MAPPING} for a complete list of elemet methods.
   #
-  # There are also dynamically generated class methods that create `reader`
-  # and `writer` instance methods. Please refer to {file:README.md} for more details.
+  # There are also dynamically generated class methods that create `reader`,
+  # `writer` and `clicker` instance methods.
+  # Please refer to {file:README.md} for more details.
   #
   # @example
   #   class MyComponent < WatirPump::Component
@@ -34,6 +35,10 @@ module WatirPump
   #     # declaration of a div element reader
   #     # instance method `description` returns String
   #     div_reader :description, id: 'desc'
+  #
+  #     # declaration of a button element clicker
+  #     # instance method `login` clicks on the button
+  #     button_clicker :login, id: 'submit'
   #
   #     # declaration of a text_field writer
   #     # instance method `surname=(value)` sets value of the text_field
@@ -98,6 +103,7 @@ module WatirPump
           end
         end
       end
+      private_class_method :define_reader
 
       def self.define_writer(watir_method)
         define_method "#{watir_method}_writer" do |name, *args|
@@ -108,6 +114,7 @@ module WatirPump
           end
         end
       end
+      private_class_method :define_writer
 
       def self.define_accessor(watir_method) # rubocop:disable Metrics/AbcSize
         define_method "#{watir_method}_accessor" do |name, *args|
@@ -125,6 +132,7 @@ module WatirPump
           end
         end
       end
+      private_class_method :define_accessor
 
       # Methods for element content readers
       # span_reader, :title, id: asd
