@@ -14,6 +14,7 @@ require_relative 'components/dropdown_list'
 require_relative 'components/flag'
 
 module WatirPump
+  # Representation of a reusable page component.
   class Component # rubocop:disable Metrics/ClassLength
     extend Forwardable
 
@@ -202,16 +203,7 @@ module WatirPump
           end
         end
       end
-
-      def decorate2(method, code)
-        original_name = "#{method}_before_decorate2".to_sym
-        alias_method original_name, method
-        define_method method do |*args|
-          v = send(original_name, *args)
-          instance_exec(v, &code)
-        end
-      end
-    end
+    end # << self
 
     def initialize(browser, parent = nil, root_node = nil)
       @browser = browser
@@ -222,8 +214,7 @@ module WatirPump
     def root
       return @root_node if @root_node
       return browser if parent.nil?
-      ret = parent.root
-      ret.class.name.include?('Collection') ? ret.first : ret
+      parent.root
     end
     alias node root
 
@@ -272,6 +263,8 @@ module WatirPump
         end
       end
     end
+
+    private
 
     def find_element(watir_method, args, loc_args = nil)
       find_element_raw(watir_method: watir_method,

@@ -131,7 +131,7 @@ end
 
 ```ruby
 class SearchResults < WatirPump::Page
-  url '/search{/phrase}'
+  url '/search/{phrase}'
   divs :results, class: 'result-item'
 end
 
