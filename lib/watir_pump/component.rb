@@ -15,6 +15,30 @@ require_relative 'components/flag'
 
 module WatirPump
   # Representation of a reusable page component.
+  #
+  # Next to class methods documented below it contains also dynamically
+  # generated methods for declaring +Watir::Elements+ belonging to the
+  # component.
+  #
+  # See {WatirPump::WATIR_METHOD_MAPPING} for a complete list of elemet methods.
+  #
+  # There are also dynamically generated class methods that create `reader`
+  # and `writer` instance methods. Please refer to {file:README.md} for more details.
+  #
+  # @example
+  #   class MyComponent < WatirPump::Component
+  #     # declaration of a div element
+  #     # instance method `description` returns Watir::Div
+  #     div :description, id: 'desc'
+  #
+  #     # declaration of a div element reader
+  #     # instance method `description` returns String
+  #     div_reader :description, id: 'desc'
+  #
+  #     # declaration of a text_field writer
+  #     # instance method `surname=(value)` sets value of the text_field
+  #     text_field_writer :surname, id: 'surname'
+  #   end
   class Component # rubocop:disable Metrics/ClassLength
     extend Forwardable
 
@@ -22,7 +46,12 @@ module WatirPump
 
     delegate Constants::METHODS_FORWARDED_TO_ROOT => :root
 
+    # Reference to browser instance
+    # @return [Watir::Browser]
     attr_reader :browser
+
+    # Parent {Component}. +nil+ for Pages
+    # @return [Component]
     attr_reader :parent
 
     class << self
@@ -205,18 +234,88 @@ module WatirPump
       end
     end # << self
 
+    # Invoked implicity by WatirPump framework.
+    #
+    # @param [Watir::Browser] browser Reference to browser instance
+    # @param [Component] parent Parent Component
+    # @param [Watir::Element] root_node Component mounting point in the DOM tree
     def initialize(browser, parent = nil, root_node = nil)
       @browser = browser
       @parent = parent
       @root_node = root_node
     end
 
+    # Component mounting point in the DOM tree.
+    # All component elements are located relatively to it.
+    # For {Page} instances it points to +browser+
+    #
+    # @return [Watir::Element]
     def root
       return @root_node if @root_node
       return browser if parent.nil?
       parent.root
     end
     alias node root
+
+    # Invokes element writer methods of given names with given values
+    # @example
+    #   class MyPage < WatirPump::Page
+    #     text_field_writer :first_name, id: 'first_name'
+    #     text_field_writer :last_name, id: 'last_name'
+    #     flag_writer :confirmed, id: 'confirmed'
+    #   end
+    #   MyPage.use do
+    #     fill_form(first_name: 'John', last_name: 'Smith', confirmed: true)
+    #     # is a shorthand for:
+    #     self.first_name = 'John'
+    #     self.last_name = 'Smith'
+    #     self.confirmed = true
+    #   end
+    #
+    # @param Hash data Names of writer methods (symbols), and values for them.
+    def fill_form(data)
+      missing = data.to_h.keys - form_field_writers.to_a
+      unless missing.empty?
+        raise "#{self.class.name} does not contain writer(s) for #{missing}"
+      end
+      data.to_h.each_pair do |k, v|
+        send("#{k}=", v)
+      end
+    end
+
+    # Same as {fill_form} but additionally invokes `submit` method if it exists.
+    # Otherwise raises an Exception.
+    #
+    # @param Hash data Names of writer methods (symbols), and values for them.
+    def fill_form!(data)
+      fill_form(data)
+      raise ':fill_form! requries :submit method' unless respond_to? :submit
+      submit
+    end
+
+    # Invokes all reader methods at once and returns their values.
+    # @example
+    #   class MyPage < WatirPump::Page
+    #     span_reader :first_name, id: 'first_name'
+    #     span_reader :last_name, id: 'last_name'
+    #     flag_reader :confirmed, id: 'confirmed'
+    #   end
+    #   MyPage.use do
+    #     data = form_data
+    #     data == {first_name: 'John', last_name: 'Smith', confirmed: true}
+    #   end
+    #
+    # @return [Hash] Names of declared reader methods (symbols)
+    #   and values they returned.
+    def form_data
+      {}.tap do |h|
+        form_field_readers.map do |field|
+          h[field] = send(field)
+        end
+      end
+    end
+
+    private
 
     def form_field_writers
       return @form_field_writers if @form_field_writers
@@ -239,32 +338,6 @@ module WatirPump
       end
       @form_field_readers
     end
-
-    def fill_form(data)
-      missing = data.to_h.keys - form_field_writers.to_a
-      unless missing.empty?
-        raise "#{self.class.name} does not contain writer(s) for #{missing}"
-      end
-      data.to_h.each_pair do |k, v|
-        send("#{k}=", v)
-      end
-    end
-
-    def fill_form!(data)
-      fill_form(data)
-      raise ':fill_form! requries :submit method' unless respond_to? :submit
-      submit
-    end
-
-    def form_data
-      {}.tap do |h|
-        form_field_readers.map do |field|
-          h[field] = send(field)
-        end
-      end
-    end
-
-    private
 
     def find_element(watir_method, args, loc_args = nil)
       find_element_raw(watir_method: watir_method,
