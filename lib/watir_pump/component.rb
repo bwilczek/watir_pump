@@ -22,8 +22,8 @@ module WatirPump
   #
   # See {WatirPump::WATIR_METHOD_MAPPING} for a complete list of elemet methods.
   #
-  # There are also dynamically generated class methods that create `reader`,
-  # `writer` and `clicker` instance methods.
+  # There are also dynamically generated class methods that create +reader+,
+  # +writer+ and +clicker+ instance methods.
   # Please refer to {file:README.md} for more details.
   #
   # @example
@@ -70,10 +70,16 @@ module WatirPump
         end
       end
 
+      # Returns a set of declared element readers. Used by {form_data}
+      #
+      # @return [Set<Symbol>]
       def form_field_readers
         @form_field_readers ||= Set.new
       end
 
+      # Returns a set of declared element writers. Used by {fill_form}
+      #
+      # @return [Set<Symbol>]
       def form_field_writers
         @form_field_writers ||= Set.new
       end
@@ -83,11 +89,35 @@ module WatirPump
       include Components::DropdownList
       include Components::Flag
 
+      # Declares a custom element reader.
+      # @example
+      #   custom_reader :price, -> { root.span(id: 'price').text.to_f }
+      #   custom_reader :price2
+      #
+      #   def price2
+      #     root.span(id: 'price').text.to_f
+      #   end
+      #
+      # @param [Symbol] name Name of the reader method
+      # @param [Proc] Method body (optional). If not provided a regular instance
+      #   with given name has to be declared
       def custom_reader(name, code = nil)
         form_field_readers << name
         query(name, code) if code
       end
 
+      # Declares a custom element writer.
+      # @example
+      #   custom_writer :price, ->(v) { root.text_field(id: 'price').set(v) }
+      #   custom_writer :price2
+      #
+      #   def price2=(v)
+      #     root.text_field(id: 'price').set(v)
+      #   end
+      #
+      # @param [Symbol] name Name of the writer method (without trailing '=')
+      # @param [Proc] Method body (optional). If not provided a regular instance
+      #   with given name (with trailing '=') has to be declared
       def custom_writer(name, code = nil)
         form_field_writers << name
         query("#{name}=", code) if code
@@ -162,12 +192,28 @@ module WatirPump
         end
       end
 
+      # A shorthand to generate one-liner instance methods
+      #
+      # @example
+      #   query :sum, ->(a, b) { a + b }
+      #   # is equivalent to:
+      #   def sum(a, b)
+      #     a + b
+      #   end
+      #
+      # @param [Symbol] name Name of the method
+      # @param [Proc] p Body of the method
       def query(name, p)
         define_method(name) do |*args|
           instance_exec(*args, &p)
         end
       end
 
+      # Declares an element located with lambda.
+      # @example
+      #   element :name, -> { root.span(id: 'name') }
+      #
+      # @return [Watir::Element]
       def element(name, p)
         define_method(name) do |*args|
           ret = instance_exec(*args, &p)
@@ -181,6 +227,12 @@ module WatirPump
         end
       end
 
+      # Declares an element collection located with lambda.
+      # @example
+      #   # mind the plural in watir method name: `lis` - not `li`!
+      #   elements :items, -> { root.lis(class: 'item') }
+      #
+      # @return [Watir::ElementCollection]
       def elements(name, p)
         define_method(name) do |*args|
           ret = instance_exec(*args, &p)
@@ -194,11 +246,33 @@ module WatirPump
         end
       end
 
+      # Declares anonymous component (namespace).
+      # @example
+      #   class HomePage < WatirPump::Page
+      #     region :login_box, :div, id: 'login_box' do
+      #       text_field :username, id: 'user'
+      #       text_field :password, id: 'pass'
+      #       button :login, id: 'login'
+      #     end
+      #
+      #     def do_login(user, pass)
+      #       login_box.username.set user
+      #       login_box.password.set pass
+      #       login_box.login.click
+      #     end
+      #   end
       def region(name, loc_method = nil, *loc_args, &blk)
         klass = Class.new(Component) { instance_exec(&blk) }
         component(name, klass, loc_method, *loc_args)
       end
 
+      # Declares a component of a given class under a given method name.
+      # @example
+      #   component :login_form1, LoginForm, :div, id: 'login_form1'
+      #   component :login_form2, LoginForm, -> { root.div(id: 'login_form2') }
+      #
+      # @param [Symbol] name Name of the method to access the component instance
+      # @param [Class] klass Class of the declared component
       def component(name, klass, loc_method = nil, *loc_args)
         define_method(name) do |*args|
           node = find_element_raw(watir_method: loc_method,
@@ -215,6 +289,14 @@ module WatirPump
         end
       end
 
+      # Declares a component collection
+      #   of a given class under a given method name.
+      # @example
+      #   components :products1, ProductList, :divs, class: 'product'
+      #   components :products2, ProductList, -> { root.divs(class: 'product') }
+      #
+      # @param [Symbol] name Name of the method to access the component list
+      # @param [Class] klass Class of the component in the list
       def components(name, klass, loc_method = nil, *loc_args)
         define_method(name) do |*args|
           nodes = find_element_raw(watir_method: loc_method,
@@ -231,6 +313,13 @@ module WatirPump
         end
       end
 
+      # Decorate the result of given method with a list of wrapper classes.
+      #
+      # @example
+      #   decorate :products, ProductCollection, AccessByNameCollection
+      #
+      # @param [Symbol] method Name of the method to be decorated
+      # @param [*Class] klasses List of wrapper classes
       def decorate(method, *klasses)
         klasses.each do |klass|
           original_name = "#{method}_before_#{klass}".to_sym

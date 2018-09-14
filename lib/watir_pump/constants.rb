@@ -39,6 +39,7 @@ module WatirPump
       h4
       h5
       h6
+      li
     ].freeze
   end
 end
