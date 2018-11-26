@@ -1,3 +1,8 @@
+## version 0.4.7, 2018.11.26
+
+* Create `clicker` and `reader` methods for more elements
+* Make README part of the gem
+
 ## version 0.4.6, 2018.09.14
 
 * Remove elements not supported in Watir 6.14

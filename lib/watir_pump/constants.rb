@@ -17,6 +17,11 @@ module WatirPump
       a
       button
       link
+      div
+      span
+      li
+      td
+      th
     ].freeze
 
     WRITABLES = %i[
@@ -31,6 +36,7 @@ module WatirPump
       p
       link
       td
+      th
       text_field
       textarea
       h1
