@@ -4,7 +4,7 @@ $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |s|
   s.name         = 'watir_pump'
-  s.version      = '0.4.7'
+  s.version      = '0.4.8'
   s.summary      = 'Page Object pattern for Watir. Hacker friendly and enterprise ready.'
   s.author       = 'Bartek Wilczek'
   s.email        = 'bwilczek@gmail.com'

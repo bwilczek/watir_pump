@@ -917,6 +917,33 @@ There's a few methods that components forward directly to its root:
 
 Thanks to this one can write just `comp.present?` instead of `comp.root.present?`.
 
+### Customized `inspect` method
+
+This features is especially useful when using WatirPump with testing frameworks like `rspec`.
+
+Consider the following example:
+
+```ruby
+class MyComponent < WatirPump::Component
+  span_reader :name, id: 'name'
+  span_reader :surname, id: 'surname'
+  span_reader :age, id: 'age'
+  inspect_properties [:name, :surname, :age]
+end
+
+class HomePage < WatirPump::Page
+  component :details, MyComponent
+end
+
+MyPage.open do
+  expect(details).to have_attributes(name: 'John', surname: 'Smith')
+end
+```
+
+In case of expectation (here: `have_attributes`) not matched `rspec` will display the `expected` and `got` values.
+Without the usage of `inspect_properties` the default implementation of `inspect` would be used, and it's not
+very useful for test debugging since it's too verbose. Use `inspect_properties` to have your `rspec` logs easy to work with.
+
 ## Region aka anonymous component
 
 If certain HTML section appears only on one page (thus there's no point in creating another `Component` class)

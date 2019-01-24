@@ -10,7 +10,7 @@ module WatirPump
     include Constants
 
     delegate Enumerable.instance_methods(false) => :@arr
-    delegate %i[[] empty? each] => :@arr
+    delegate %i[[] empty? each inspect last] => :@arr
 
     def initialize(arr)
       @arr = arr

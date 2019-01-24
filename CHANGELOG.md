@@ -1,3 +1,8 @@
+## version 0.4.8, 2019.01.24
+
+* add `inspect_properties` macro
+* add README to the gem, so it can be displayed on rubydocs.info
+
 ## version 0.4.7, 2018.11.26
 
 * Create `clicker` and `reader` methods for more elements

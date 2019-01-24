@@ -1,2 +1,3 @@
 watir_pump-*.gem
 .yardoc
+Gemfile.lock

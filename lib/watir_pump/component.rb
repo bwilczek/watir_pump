@@ -329,6 +329,24 @@ module WatirPump
           end
         end
       end
+
+      # Define the customized `inspect` method
+      # that will return the desired properties
+      # Useful especially when working with testing frameworks that
+      # inspect the object under test in case of expectations not being met
+      #
+      # @param [Symbol] properties (methods) to be included in the result
+      #
+      # @return Hash
+      def inspect_properties(properties)
+        define_method :inspect do
+          ret = {}
+          properties.each do |p|
+            ret[p] = public_send(p)
+          end
+          ret
+        end
+      end
     end # << self
 
     # Invoked implicity by WatirPump framework.
@@ -410,6 +428,15 @@ module WatirPump
           h[field] = send(field)
         end
       end
+    end
+
+    # Customized Ruby's object inspection method
+    #
+    # @return String
+    def inspect
+      # rubocop:disable Metrics/LineLength
+      "<#{self.class.name} parent: #{parent.class.name} methods: #{public_methods(false).join(', ')}>"
+      # rubocop:enable Metrics/LineLength
     end
 
     private
