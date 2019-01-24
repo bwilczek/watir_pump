@@ -64,6 +64,7 @@ module WatirPump
       Watir::Container.instance_methods(false).each do |watir_method|
         define_method watir_method do |name, *args|
           return if public_instance_methods.include? name
+
           define_method(name) do |*loc_args|
             find_element(watir_method, args, loc_args)
           end
@@ -368,6 +369,7 @@ module WatirPump
     def root
       return @root_node if @root_node
       return browser if parent.nil?
+
       parent.root
     end
     alias node root
@@ -393,6 +395,7 @@ module WatirPump
       unless missing.empty?
         raise "#{self.class.name} does not contain writer(s) for #{missing}"
       end
+
       data.to_h.each_pair do |k, v|
         send("#{k}=", v)
       end
@@ -405,6 +408,7 @@ module WatirPump
     def fill_form!(data)
       fill_form(data)
       raise ':fill_form! requries :submit method' unless respond_to? :submit
+
       submit
     end
 
@@ -443,6 +447,7 @@ module WatirPump
 
     def form_field_writers
       return @form_field_writers if @form_field_writers
+
       @form_field_writers = Set.new
       self.class.ancestors.each do |a|
         if a.respond_to? :form_field_writers
@@ -454,6 +459,7 @@ module WatirPump
 
     def form_field_readers
       return @form_field_readers if @form_field_readers
+
       @form_field_readers = Set.new
       self.class.ancestors.each do |a|
         if a.respond_to? :form_field_readers
@@ -484,6 +490,7 @@ module WatirPump
     def check_watir_method_mapping(watir_method, evaluated)
       return evaluated unless watir_method.is_a?(Symbol)
       return evaluated if evaluated.class == WATIR_METHOD_MAPPING[watir_method]
+
       raise Errors::ElementMismatch.new(
         expected: WATIR_METHOD_MAPPING[watir_method],
         actual: evaluated.class
@@ -496,6 +503,7 @@ module WatirPump
       if example&.instance_exec { respond_to? name }
         return example.instance_exec { send(name, *args, &blk) }
       end
+
       super
     end
 

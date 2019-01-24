@@ -10,6 +10,7 @@ module WatirPump
           selected = list.find(&:set?)
           if selected
             return selected.parent.text if selected&.parent&.tag_name == 'label'
+
             return root.label(for: selected.id).text
           end
         end

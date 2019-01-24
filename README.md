@@ -1,5 +1,7 @@
 # WatirPump
 
+[![Build Status](https://travis-ci.org/bwilczek/watir_pump.svg?branch=master)](https://travis-ci.org/bwilczek/watir_pump)
+
 `WatirPump` is a `Page Object` pattern implementation for `Watir`. Hacker friendly and enterprise ready.
 Heavily inspired by `SitePrism` and `Watirsome`.
 

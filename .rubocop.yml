@@ -15,4 +15,6 @@ Metrics/LineLength:
     - watir_pump.gemspec
 Style/CommentedKeyword:
   Enabled: false
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
 

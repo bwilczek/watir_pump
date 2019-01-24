@@ -28,6 +28,7 @@ module WatirPump
           if selected.first&.parent&.tag_name == 'label'
             return selected.map { |el| el.parent.text }
           end
+
           selected.map { |el| root.label(for: el.id).text }
         end
       end

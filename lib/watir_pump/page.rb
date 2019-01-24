@@ -31,6 +31,7 @@ module WatirPump
       #   Compliant with +Addressable::Template+
       def uri(uri = nil)
         return @uri if @uri
+
         if uri.nil?
           ancestors[1..-1].each do |a|
             return @uri = a.uri if a.respond_to?(:uri) && a.uri

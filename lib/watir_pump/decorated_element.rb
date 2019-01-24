@@ -8,6 +8,7 @@ module WatirPump
 
     def method_missing(name, *args, &blk)
       return @element.send(name, *args, &blk) if @element.respond_to?(name)
+
       super
     end
 

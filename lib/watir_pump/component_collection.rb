@@ -19,6 +19,7 @@ module WatirPump
     Constants::METHODS_FORWARDED_TO_ROOT.each do |method_name|
       define_method method_name do
         return false if empty?
+
         find { |component| component.send(method_name) }
       end
     end
